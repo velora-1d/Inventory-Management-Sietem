@@ -10,8 +10,6 @@
         </div>
     </x-slot>
 
-    <div class="py-4">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <form action="{{ route('purchases.store') }}" method="POST" enctype="multipart/form-data"
                     x-data="purchaseForm({
                         items: {{ Js::from(old('items', [])) }},
@@ -25,6 +23,4 @@
                 @include('purchases.form')
 
             </form>
-        </div>
-    </div>
 </x-app-layout>

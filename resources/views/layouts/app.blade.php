@@ -15,27 +15,73 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
+        <style>
+            .nav-icon { width:16px; height:16px; flex-shrink:0; display:block; }
+            .nav-chevron { display:inline-flex; align-items:center; transition:transform 0.2s ease; }
+            .nav-chevron-open { transform:rotate(180deg); }
+        </style>
     </head>
-    <body class="font-sans antialiased bg-background text-foreground">
-        <div class="min-h-screen bg-background flex flex-col">
-            <div class="flex-1">
-                @include('layouts.navigation')
+    <body class="font-sans antialiased bg-background text-foreground" x-data="{ sidebarOpen: false }">
+        <div class="min-h-screen bg-background flex">
+            <!-- Sidebar -->
+            @include('layouts.navigation')
 
-                <!-- Page Heading -->
-                @isset($header)
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
+            <!-- Main Content Area -->
+            <div class="flex-1 flex flex-col min-w-0 lg:ml-64">
+                <!-- Top Navbar -->
+                <header class="h-16 border-b border-border flex items-center justify-between lg:justify-end px-6 bg-background sticky top-0 z-40">
+                    <!-- Mobile Menu Button -->
+                    <button @click="sidebarOpen = true" class="lg:hidden p-2 rounded-md hover:bg-muted text-foreground">
+                        <x-heroicon-o-bars-3 class="h-6 w-6" />
+                    </button>
+
+                    <!-- User Dropdown & Settings -->
+                    <div class="flex items-center gap-4">
+                        <span class="hidden md:inline-flex text-sm font-medium">{{ Auth::user()->name }}</span>
+                        <x-dropdown align="right" width="48">
+                            <x-slot name="trigger">
+                                <button class="inline-flex items-center justify-center whitespace-nowrap rounded-full focus:outline-none transition-colors">
+                                    <x-avatar :name="Auth::user()->name" />
+                                </button>
+                            </x-slot>
+
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('profile.index')" :active="request()->routeIs('profile.*')">
+                                    {{ __('Profile') }}
+                                </x-dropdown-link>
+
+                                <x-dropdown-link :href="route('settings.index')" :active="request()->routeIs('settings.*')">
+                                    {{ __('Settings') }}
+                                </x-dropdown-link>
+
+                                <!-- Authentication -->
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <x-dropdown-link :href="route('logout')"
+                                            onclick="event.preventDefault();
+                                                        this.closest('form').submit();">
+                                        {{ __('Log Out') }}
+                                    </x-dropdown-link>
+                                </form>
+                            </x-slot>
+                        </x-dropdown>
                     </div>
-                @endisset
+                </header>
 
-                <!-- Page Content -->
-                <main>
-                    {{ $slot }}
-                </main>
+                <div class="flex-1 p-4 md:p-6">
+                    <!-- Page Heading -->
+                    @isset($header)
+                        <div class="mb-6">
+                            {{ $header }}
+                        </div>
+                    @endisset
+
+                    <!-- Page Content -->
+                    <main>
+                        {{ $slot }}
+                    </main>
+                </div>
             </div>
-
-            <!-- Footer -->
-            @include('layouts.footer')
         </div>
         <x-toaster />
         <livewire:components.delete-modal />

@@ -20,72 +20,87 @@
                 </div>
             </div>
 
-            <div class="space-y-6">
-                <!-- Details -->
-                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                    <div class="space-y-1">
-                        <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Category') }}</label>
-                        <p class="text-sm text-foreground font-medium">{{ $product->category->name ?? '-' }}</p>
+            <div class="flex flex-col md:flex-row gap-6">
+                <!-- Product Image -->
+                <div class="w-full md:w-48 shrink-0">
+                    <div class="aspect-square w-full rounded-xl border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center shadow-inner">
+                        @if($product->image)
+                            <img src="{{ Storage::url($product->image) }}" class="w-full h-full object-cover">
+                        @else
+                            <svg class="w-16 h-16 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                            </svg>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Details Content -->
+                <div class="flex-1 space-y-6">
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div class="space-y-1">
+                            <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Category') }}</label>
+                            <p class="text-sm text-slate-800 font-semibold">{{ $product->category->name ?? '-' }}</p>
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Unit') }}</label>
+                            <p class="text-sm text-slate-800 font-semibold">
+                                @if($product->unit)
+                                    {{ $product->unit->name }} <span class="text-slate-400 font-medium">({{ $product->unit->symbol }})</span>
+                                @else
+                                    -
+                                  @endif
+                            </p>
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Selling Price') }}</label>
+                            <p class="text-sm text-slate-800 font-bold">@money($product->selling_price)</p>
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Purchase Price') }}</label>
+                            <p class="text-sm text-slate-800 font-bold">@money($product->purchase_price)</p>
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Stock') }}</label>
+                            <p class="text-sm font-semibold {{ $product->quantity <= $product->min_stock ? 'text-rose-500' : 'text-slate-800' }}">
+                                {{ number_format($product->quantity) . ' ' . ($product->unit->symbol ?? '') }}
+                            </p>
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Min Stock Alert') }}</label>
+                            <p class="text-sm text-slate-800 font-semibold">{{ number_format($product->min_stock) }}</p>
+                        </div>
                     </div>
 
                     <div class="space-y-1">
-                        <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Unit') }}</label>
-                        <p class="text-sm text-foreground font-medium">
-                            @if($product->unit)
-                                {{ $product->unit->name }} <span class="text-muted-foreground">({{ $product->unit->symbol }})</span>
-                            @else
-                                -
-                            @endif
+                        <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Description') }}</label>
+                        <p class="text-sm text-slate-700 leading-relaxed font-medium">
+                            {{ $product->description ?: 'No description provided.' }}
                         </p>
                     </div>
 
                     <div class="space-y-1">
-                        <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Selling Price') }}</label>
-                        <p class="text-sm text-foreground font-medium">@money($product->selling_price)</p>
+                        <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Internal Notes') }}</label>
+                        <div class="bg-gray-50 border border-gray-100 p-3 rounded-md">
+                            <p class="text-sm text-slate-700 font-mono whitespace-pre-wrap leading-relaxed">{{ $product->notes ?: 'No notes.' }}</p>
+                        </div>
                     </div>
 
-                    <div class="space-y-1">
-                        <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Purchase Price') }}</label>
-                        <p class="text-sm text-foreground font-medium">@money($product->purchase_price)</p>
-                    </div>
+                    <!-- Meta -->
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div class="space-y-1">
+                            <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Created At') }}</label>
+                            <p class="text-sm text-slate-600 font-medium">{{ $product->created_at?->format('d M Y, H:i') ?? '-' }}</p>
+                        </div>
 
-                    <div class="space-y-1">
-                        <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Stock') }}</label>
-                        <p class="text-sm text-foreground font-medium {{ $product->quantity <= $product->min_stock ? 'text-red-500' : '' }}">
-                            {{ $product->quantity . ' ' . ($product->unit->symbol ?? '') }}
-                        </p>
-                    </div>
-
-                    <div class="space-y-1">
-                        <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Min Stock Alert') }}</label>
-                        <p class="text-sm text-foreground font-medium">{{ $product->min_stock }}</p>
-                    </div>
-                </div>
-
-                <div class="space-y-1">
-                    <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Description') }}</label>
-                    <p class="text-sm text-foreground font-medium">
-                        {{ $product->description ?: 'No description provided.' }}
-                    </p>
-                </div>
-
-                <div class="space-y-1">
-                    <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Internal Notes') }}</label>
-                    <div class="bg-gray-50 border border-secondary p-3 rounded-md">
-                        <p class="text-sm text-foreground font-mono whitespace-pre-wrap leading-relaxed">{{ $product->notes ?: 'No notes.' }}</p>
-                    </div>
-                </div>
-
-                <!-- Meta -->
-                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                    <div class="space-y-1">
-                        <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Created At') }}</label>
-                        <p class="text-sm text-foreground font-medium">{{ $product->created_at?->format('d M Y, H:i') ?? '-' }}</p>
-                    </div>
-
-                    <div class="space-y-1">
-                        <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Last Updated') }}</label>
-                        <p class="text-sm text-foreground font-medium">{{ $product->updated_at?->format('d M Y, H:i') ?? '-' }}</p>
+                        <div class="space-y-1">
+                            <label class="text-sm font-medium leading-none text-muted-foreground">{{ __('Last Updated') }}</label>
+                            <p class="text-sm text-slate-600 font-medium">{{ $product->updated_at?->format('d M Y, H:i') ?? '-' }}</p>
+                        </div>
                     </div>
                 </div>
             </div>

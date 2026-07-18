@@ -4,6 +4,8 @@ namespace App\Livewire\Sales;
 
 use Carbon\Carbon;
 use App\Models\Sale;
+use App\Models\Customer;
+use App\Models\User;
 use App\Enums\SaleStatus;
 use App\Services\SaleService;
 use App\Exceptions\SaleException;
@@ -72,6 +74,9 @@ final class SalesTable extends PowerGridComponent
     public function columns(): array
     {
         return [
+            Column::make('No.', 'id')
+                ->index(),
+
             Column::action('Action'),
 
             Column::make('ID', 'id')->hidden(),
@@ -116,13 +121,12 @@ final class SalesTable extends PowerGridComponent
     public function filters(): array
     {
         return [
-            Filter::multiSelectAsync('customer_name', 'customer_id')
-                ->url(route('ajax.customers.search'))
-                ->method('POST')
-                ->optionValue('value')
-                ->optionLabel('text'),
+            Filter::select('customer_name', 'customer_id')
+                ->dataSource(Customer::all())
+                ->optionValue('id')
+                ->optionLabel('name'),
 
-            Filter::multiSelect('status', 'status')
+            Filter::select('status', 'status')
                 ->dataSource(collect(SaleStatus::cases())->map(fn($status) => [
                     'value' => $status->value,
                     'label' => $status->label(),
@@ -130,11 +134,10 @@ final class SalesTable extends PowerGridComponent
                 ->optionLabel('label')
                 ->optionValue('value'),
 
-            Filter::multiSelectAsync('creator_name', 'created_by')
-                ->url(route('ajax.users.search'))
-                ->method('POST')
-                ->optionValue('value')
-                ->optionLabel('text'),
+            Filter::select('creator_name', 'created_by')
+                ->dataSource(User::all())
+                ->optionValue('id')
+                ->optionLabel('name'),
 
             Filter::datepicker('sale_date_formatted', 'sale_date')
                 ->params([

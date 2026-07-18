@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('purchases', function (Blueprint $table) {
+        if (!Schema::hasTable('purchases')) {
+            Schema::create('purchases', function (Blueprint $table) {
             $table->id();
             $table->string('invoice_number')->nullable()->unique();
             $table->foreignId('supplier_id')->constrained()->restrictOnDelete();
@@ -24,6 +25,7 @@ return new class extends Migration
             $table->foreignId('created_by')->constrained('users')->restrictOnDelete();
             $table->timestamps();
         });
+        }
     }
 
     /**

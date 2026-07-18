@@ -16,6 +16,7 @@ class Product extends Model
         'unit_id',
         'sku',
         'name',
+        'image',
         'purchase_price',
         'selling_price',
         'quantity',

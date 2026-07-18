@@ -155,7 +155,7 @@
                     class="cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-accent hover:text-accent-foreground"
                 >
                     <span x-text="option[optionLabel]" class="block truncate" :class="{ 'font-semibold': selected == option[optionValue], 'font-normal': selected != option[optionValue] }"></span>
-                    <span x-show="selected == option[optionValue]" class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
+                    <span x-show="selected == option[optionValue]" class="absolute inset-y-0 right-0 flex items-center pr-4 text-sky-600">
                         <x-heroicon-o-check class="w-5 h-5" />
                     </span>
                 </li>

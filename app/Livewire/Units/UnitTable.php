@@ -57,6 +57,9 @@ final class UnitTable extends PowerGridComponent
     public function columns(): array
     {
         return [
+            Column::make('No.', 'id')
+                ->index(),
+
             Column::make('ID', 'id')
                 ->hidden()
                 ->visibleInExport(true),

@@ -19,7 +19,13 @@ class SalesController extends Controller
 
     public function create()
     {
-        return view('sales.create');
+        $categories = \App\Models\Category::orderBy('name')->get();
+        $products = \App\Models\Product::with(['unit', 'category'])
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
+            
+        return view('sales.create', compact('categories', 'products'));
     }
 
     public function store(StoreSaleRequest $request, SaleService $saleService)

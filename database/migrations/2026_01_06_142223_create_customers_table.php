@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customers', function (Blueprint $table) {
+        if (!Schema::hasTable('customers')) {
+            Schema::create('customers', function (Blueprint $table) {
             $table->id();
             $table->string('name')->index();
             $table->string('email')->nullable()->index();
@@ -20,6 +21,7 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

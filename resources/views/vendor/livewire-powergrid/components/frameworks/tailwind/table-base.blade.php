@@ -1,0 +1,36 @@
+@php
+    $columns = collect($columns)->map(function ($column) {
+        return data_forget($column, 'rawQueries');
+    });
+@endphp
+
+<div
+    class="flex flex-col"
+    @if ($deferLoading) wire:init="fetchDatasource" @endif
+>
+    <div
+        id="power-grid-table-container"
+        class="{{ theme_style($theme, 'table.layout.container') }}"
+    >
+        <div
+            id="power-grid-table-base"
+            class="{{ theme_style($theme, 'table.layout.base') }}"
+        >
+            @include(theme_style($theme, 'layout.header'), [
+                'enabledFilters' => $enabledFilters,
+            ])
+
+            <div
+                @class([
+                    'overflow-auto' => $readyToLoad,
+                    'overflow-hidden' => !$readyToLoad,
+                    theme_style($theme, 'table.layout.div'),
+                ])
+            >
+                @include($table)
+            </div>
+
+            @include(theme_style($theme, 'footer.view'))
+        </div>
+    </div>
+</div>

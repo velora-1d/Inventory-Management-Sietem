@@ -11,11 +11,7 @@
         </div>
     </x-slot>
 
-    <div class="py-4">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <livewire:finance-categories.finance-category-table />
-        </div>
-    </div>
+    <livewire:finance-categories.finance-category-table />
 
     <livewire:finance-categories.finance-category-form />
     <livewire:finance-categories.finance-category-detail />

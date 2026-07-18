@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('finance_transactions', function (Blueprint $table) {
+        if (!Schema::hasTable('finance_transactions')) {
+            Schema::create('finance_transactions', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique(); // FTX.YYMMDD.0001
             $table->date('transaction_date');
@@ -22,6 +23,7 @@ return new class extends Migration
             $table->foreignId('created_by')->constrained('users')->restrictOnDelete();
             $table->timestamps();
         });
+        }
     }
 
     /**

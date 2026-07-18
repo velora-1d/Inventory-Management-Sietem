@@ -1,4 +1,4 @@
-<x-modal name="product-form-modal" :title="''" maxWidth="2xl">
+<x-modal name="product-form-modal" :title="''" maxWidth="5xl">
     <div class="p-6">
         <!-- Custom Header -->
         <div class="mb-6 space-y-1.5 text-center sm:text-left border-b border-gray-200 pb-4">
@@ -11,165 +11,212 @@
         </div>
 
         <form wire:submit="save" class="space-y-6">
+            <!-- Two Column Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- LEFT COLUMN: Product Details & Inventory -->
+                <div class="space-y-5">
+                    <h4 class="text-xs font-bold text-sky-600 uppercase tracking-wider border-b border-sky-100 pb-1.5">Product Information</h4>
+                    
+                    <!-- SKU & Name Stacked -->
+                    <div class="space-y-4">
+                        @if($isEditing)
+                            <x-form-input
+                                name="sku"
+                                label="SKU (Stock Keeping Unit)"
+                                type="text"
+                                wire:model="sku"
+                                readonly
+                                placeholder="e.g. SKU-1234-ABCD"
+                                class="bg-muted text-muted-foreground cursor-not-allowed"
+                            />
+                        @else
+                            <div class="hidden">
+                                <input type="hidden" wire:model="sku">
+                            </div>
+                        @endif
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- SKU -->
-                @if($isEditing)
-                    <x-form-input
-                        name="sku"
-                        label="SKU (Stock Keeping Unit)"
-                        type="text"
-                        wire:model="sku"
-                        readonly
-                        placeholder="e.g. SKU-1234-ABCD"
-                        class="bg-muted text-muted-foreground cursor-not-allowed"
-                    />
-                @else
-                    <!-- SKU Auto Generated -->
-                    <div class="hidden">
-                        <input type="hidden" wire:model="sku">
-                    </div>
-                @endif
-
-                <!-- Name -->
-                <x-form-input
-                    name="name"
-                    label="Product Name"
-                    placeholder="e.g. Wireless Mouse"
-                    type="text"
-                    wire:model="name"
-                    required
-                    class="{{ !$isEditing ? 'col-span-2' : '' }}"
-                />
-            </div>
-
-            <!-- Row 2: Category & Unit -->
-            <div class="flex flex-col sm:flex-row gap-6">
-                <!-- Category -->
-                <div class="w-full sm:w-1/2 space-y-2">
-                    <x-input-label for="category_id" :value="__('Category')" required />
-                    <div wire:ignore>
-                        <x-tom-select
-                            id="category_id"
-                            name="category_id"
-                            wire:model="category_id"
-                            :url="route('ajax.categories.search')"
-                            method="POST"
-                            placeholder="Select Category"
-                            data-initial-label="{{ $categoryName }}"
+                        <x-form-input
+                            name="name"
+                            label="Product Name"
+                            placeholder="e.g. Wireless Mouse"
+                            type="text"
+                            wire:model="name"
+                            required
                         />
                     </div>
-                    <x-input-error :messages="$errors->get('category_id')" />
-                </div>
 
-                <!-- Unit -->
-                <div class="w-full sm:w-1/2 space-y-2">
-                    <x-input-label for="unit_id" :value="__('Unit')" required />
-                    <div wire:ignore>
-                        <x-tom-select
-                            id="unit_id"
-                            name="unit_id"
-                            wire:model="unit_id"
-                            :url="route('ajax.units.search')"
-                            method="POST"
-                            placeholder="Select Unit"
-                            data-initial-label="{{ $unitName }}"
-                        />
+                    <!-- Category & Unit Side-by-Side -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Category -->
+                        <div class="space-y-2">
+                            <x-input-label for="category_id" :value="__('Category')" required />
+                            <div wire:ignore>
+                                <x-tom-select
+                                    id="category_id"
+                                    name="category_id"
+                                    wire:model="category_id"
+                                    :url="route('ajax.categories.search')"
+                                    method="POST"
+                                    placeholder="Select Category"
+                                    data-initial-label="{{ $categoryName }}"
+                                />
+                            </div>
+                            <x-input-error :messages="$errors->get('category_id')" />
+                        </div>
+
+                        <!-- Unit -->
+                        <div class="space-y-2">
+                            <x-input-label for="unit_id" :value="__('Unit')" required />
+                            <div wire:ignore>
+                                <x-tom-select
+                                    id="unit_id"
+                                    name="unit_id"
+                                    wire:model="unit_id"
+                                    :url="route('ajax.units.search')"
+                                    method="POST"
+                                    placeholder="Select Unit"
+                                    data-initial-label="{{ $unitName }}"
+                                />
+                            </div>
+                            <x-input-error :messages="$errors->get('unit_id')" />
+                        </div>
                     </div>
-                    <x-input-error :messages="$errors->get('unit_id')" />
+
+                    <!-- Prices Side-by-Side -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Purchase Price -->
+                        <div class="space-y-2">
+                            <x-input-label for="purchase_price" :value="__('Purchase Price') . ' (' . \App\Models\Setting::get('currency_symbol', 'Rp') . ')'" />
+                            <x-currency-input
+                                id="purchase_price"
+                                wire:model.live.debounce.500ms="purchase_price"
+                                placeholder="0"
+                                required
+                            />
+                            <x-input-error :messages="$errors->get('purchase_price')" />
+                        </div>
+
+                        <!-- Selling Price -->
+                        <div class="space-y-2">
+                            <x-input-label for="selling_price" :value="__('Selling Price') . ' (' . \App\Models\Setting::get('currency_symbol', 'Rp') . ')'" />
+                            <x-currency-input
+                                id="selling_price"
+                                wire:model.live.debounce.500ms="selling_price"
+                                placeholder="0"
+                                required
+                            />
+                            <x-input-error :messages="$errors->get('selling_price')" />
+                        </div>
+                    </div>
+
+                    <!-- Quantity, Min Stock, Active Status -->
+                    <div class="grid grid-cols-3 gap-4 items-end">
+                        <!-- Quantity -->
+                        <x-form-input
+                            name="quantity"
+                            label="Quantity"
+                            type="number"
+                            wire:model="quantity"
+                            min="0"
+                            placeholder="0"
+                            required
+                        />
+
+                        <!-- Min Stock -->
+                        <x-form-input
+                            name="min_stock"
+                            label="Min Stock"
+                            type="number"
+                            wire:model="min_stock"
+                            min="0"
+                            placeholder="0"
+                            required
+                        />
+
+                        <!-- Is Active -->
+                        <div class="flex items-center justify-center pb-3">
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    wire:model="is_active"
+                                    class="w-5 h-5 rounded-full border-2 border-primary text-primary focus:ring-primary/20"
+                                >
+                                <span class="ml-2 text-xs font-semibold text-gray-700">
+                                    {{ __('Active') }}
+                                </span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Prices (Forced Inline) -->
-            <div class="flex flex-col sm:flex-row gap-6">
-                <!-- Purchase Price -->
-                <div class="w-full sm:w-1/2 space-y-2">
-                    <x-input-label for="purchase_price" :value="__('Purchase Price') . ' (' . \App\Models\Setting::get('currency_symbol', 'Rp') . ')'" />
-                    <x-currency-input
-                        id="purchase_price"
-                        wire:model.live.debounce.500ms="purchase_price"
-                        placeholder="0"
-                        required
-                    />
-                    <x-input-error :messages="$errors->get('purchase_price')" />
+                <!-- RIGHT COLUMN: Media & Description & Notes -->
+                <div class="space-y-5">
+                    <h4 class="text-xs font-bold text-sky-600 uppercase tracking-wider border-b border-sky-100 pb-1.5">Media & Notes</h4>
+                    
+                    <!-- Product Image Upload -->
+                    <div class="space-y-2">
+                        <x-input-label for="imageFile" :value="__('Product Image (Optional)')" />
+                        <div class="flex items-center gap-4 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            <!-- Preview -->
+                            <div class="w-16 h-16 rounded-lg border border-gray-200 overflow-hidden flex items-center justify-center bg-white shrink-0 shadow-sm">
+                                @if ($imageFile)
+                                    <img src="{{ $imageFile->temporaryUrl() }}" class="w-full h-full object-cover">
+                                @elseif ($image)
+                                    <img src="{{ Storage::url($image) }}" class="w-full h-full object-cover">
+                                @else
+                                    <svg class="w-8 h-8 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                    </svg>
+                                @endif
+                            </div>
+                            
+                            <div class="flex-1">
+                                <input
+                                    id="imageFile"
+                                    type="file"
+                                    wire:model="imageFile"
+                                    accept="image/*"
+                                    class="block w-full text-xs text-gray-500
+                                        file:mr-3 file:py-1.5 file:px-3
+                                        file:rounded-md file:border-0
+                                        file:text-xs file:font-semibold
+                                        file:bg-sky-50 file:text-sky-700
+                                        hover:file:bg-sky-100"
+                                />
+                                <p class="text-[10px] text-gray-400 mt-1">Image (JPG, PNG) max 2MB.</p>
+                                <x-input-error :messages="$errors->get('imageFile')" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="space-y-1.5">
+                        <x-input-label for="description" value="Description" />
+                        <textarea
+                            id="description"
+                            wire:model="description"
+                            rows="2"
+                            class="flex min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-xs ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            placeholder="Optional description..."
+                        ></textarea>
+                        <x-input-error :messages="$errors->get('description')" />
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="space-y-1.5">
+                        <x-input-label for="notes" value="Internal Notes" />
+                        <textarea
+                            id="notes"
+                            wire:model="notes"
+                            rows="2"
+                            class="flex min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-xs ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            placeholder="Internal pricing history & notes..."
+                        ></textarea>
+                        <x-input-error :messages="$errors->get('notes')" />
+                    </div>
                 </div>
 
-                <!-- Selling Price -->
-                <div class="w-full sm:w-1/2 space-y-2">
-                    <x-input-label for="selling_price" :value="__('Selling Price') . ' (' . \App\Models\Setting::get('currency_symbol', 'Rp') . ')'" />
-                    <x-currency-input
-                        id="selling_price"
-                        wire:model.live.debounce.500ms="selling_price"
-                        placeholder="0"
-                        required
-                    />
-                    <x-input-error :messages="$errors->get('selling_price')" />
-                </div>
-            </div>
-
-            <!-- Row 5: Qty, Min Stock, Active -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Quantity -->
-                <x-form-input
-                    name="quantity"
-                    label="Quantity"
-                    type="number"
-                    wire:model="quantity"
-                    min="0"
-                    placeholder="0"
-                    required
-                />
-
-                <!-- Min Stock -->
-                <x-form-input
-                    name="min_stock"
-                    label="Min Stock Alert"
-                    type="number"
-                    wire:model="min_stock"
-                    min="0"
-                    placeholder="0"
-                    required
-                />
-
-                <!-- Is Active -->
-                <div class="flex items-center h-full pt-8">
-                    <label class="inline-flex items-center cursor-pointer">
-                        <input
-                            type="checkbox"
-                            wire:model="is_active"
-                            class="w-6 h-6 rounded-full border-2 border-primary text-primary focus:ring-primary/20"
-                        >
-                        <span class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300">
-                            {{ __('Active') }}
-                        </span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Description -->
-            <div class="space-y-2">
-                <x-input-label for="description" value="Description" />
-                <textarea
-                    id="description"
-                    wire:model="description"
-                    rows="3"
-                    class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    placeholder="Optional description..."
-                ></textarea>
-                <x-input-error :messages="$errors->get('description')" />
-            </div>
-
-            <!-- Notes -->
-            <div class="space-y-2">
-                <x-input-label for="notes" value="Internal Notes" />
-                <textarea
-                    id="notes"
-                    wire:model="notes"
-                    rows="3"
-                    class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    placeholder="Internal pricing history & notes..."
-                ></textarea>
-                <x-input-error :messages="$errors->get('notes')" />
             </div>
 
             <!-- Actions -->

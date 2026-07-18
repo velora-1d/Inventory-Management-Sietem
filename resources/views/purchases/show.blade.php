@@ -17,8 +17,6 @@
         </div>
     </x-slot>
 
-    <div class="py-4">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <!-- Main Info Card -->
             <div class="bg-white shadow-sm sm:rounded-lg overflow-hidden border border-gray-200">
                 <div class="p-6">
@@ -80,7 +78,7 @@
                             <div>
                                 <label class="text-sm font-medium leading-none text-gray-500">Proof of Receipt</label>
                                 <div class="mt-1">
-                                    <a href="{{ Storage::url($purchase->proof_image) }}" target="_blank" class="text-indigo-600 hover:underline text-sm flex items-center gap-1">
+                                    <a href="{{ Storage::url($purchase->proof_image) }}" target="_blank" class="text-sky-600 hover:underline text-sm flex items-center gap-1">
                                         <x-heroicon-o-paper-clip class="w-4 h-4" />
                                         View Image
                                     </a>
@@ -147,7 +145,7 @@
                             <tfoot class="bg-gray-50 font-bold">
                                 <tr>
                                     <td colspan="6" class="px-6 py-4 text-right">Total</td>
-                                    <td class="px-6 py-4 text-right text-indigo-600 text-lg">
+                                    <td class="px-6 py-4 text-right text-sky-600 text-lg">
                                         @money($purchase->total)
                                     </td>
                                 </tr>
@@ -216,107 +214,143 @@
                             {{ __('Receive Items') }}
                         </x-primary-button>
 
-                        <!-- Modal Backdrop -->
+                        <!-- Receive Items Modal (Premium) -->
                         <div x-show="open"
                              style="display: none;"
-                             x-transition.opacity
-                             class="fixed inset-0 z-50 overflow-y-auto bg-gray-900 bg-opacity-75 flex items-center justify-center p-4">
+                             x-on:keydown.escape.window="open = false"
+                             class="relative z-[200]">
 
-                            <!-- Modal Content -->
-                            <div @click.outside="open = false"
-                                 x-transition.scale
-                                 class="relative bg-white rounded-lg max-w-md w-full p-6 shadow-xl">
+                            <!-- Backdrop -->
+                            <div
+                                x-show="open"
+                                x-transition:enter="ease-out duration-300"
+                                x-transition:enter-start="opacity-0"
+                                x-transition:enter-end="opacity-100"
+                                x-transition:leave="ease-in duration-200"
+                                x-transition:leave-start="opacity-100"
+                                x-transition:leave-end="opacity-0"
+                                class="fixed inset-0 backdrop-blur-sm bg-black/40 z-[199]"
+                                style="display: none;"
+                            ></div>
 
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">
-                                    Receive Purchase #{{ $purchase->invoice_number ?? $purchase->id }}
-                                </h3>
+                            <div class="fixed inset-0 z-[200] overflow-y-auto">
+                                <div class="flex min-h-full items-center justify-center p-4">
+                                    <div
+                                        x-show="open"
+                                        x-transition:enter="ease-out duration-300"
+                                        x-transition:enter-start="opacity-0 scale-90 translate-y-4"
+                                        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                                        x-transition:leave="ease-in duration-200"
+                                        x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                                        x-transition:leave-end="opacity-0 scale-90 translate-y-4"
+                                        class="relative w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/5"
+                                        @click.away="open = false"
+                                    >
+                                        <div class="h-1 w-full bg-gradient-to-r from-emerald-500 to-green-600"></div>
 
-                                <form
-                                    action="{{ route('purchases.mark-received', $purchase) }}"
-                                    method="POST"
-                                    enctype="multipart/form-data"
-                                    x-data="{ submitting: false }"
-                                    @submit="submitting = true"
-                                >
-                                    @csrf
-                                    @method('PATCH')
-
-                                    <div class="space-y-4">
-                                        <!-- Invoice Section -->
-                                        @if($purchase->invoice_number)
-                                            <div class="bg-gray-50 p-3 rounded-md border border-gray-200">
-                                                <span class="block text-xs font-medium text-gray-500 uppercase">Invoice Number</span>
-                                                <span class="text-sm font-semibold text-gray-900">{{ $purchase->invoice_number }}</span>
+                                        <div class="p-6">
+                                            <div class="flex items-center gap-3 mb-5">
+                                                <div class="flex items-center justify-center w-10 h-10 rounded-full bg-emerald-50 border-2 border-emerald-100">
+                                                    <svg class="w-5 h-5 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <h3 class="text-base font-semibold text-gray-900">Receive Purchase</h3>
+                                                    <p class="text-sm text-gray-500">#{{ $purchase->invoice_number ?? $purchase->id }}</p>
+                                                </div>
                                             </div>
-                                        @else
-                                            <div class="space-y-2">
-                                                <x-input-label for="invoice_number" :value="__('Final Invoice Number')" required />
-                                                <x-text-input
-                                                    id="invoice_number"
-                                                    name="invoice_number"
-                                                    :value="old('invoice_number')"
-                                                    required
-                                                    placeholder="INV...."
-                                                />
-                                                <x-input-error :messages="$errors->get('invoice_number')" class="mt-2" />
-                                            </div>
-                                        @endif
 
-                                        <!-- Proof Section -->
-                                        @if($purchase->proof_image)
-                                            <div class="bg-gray-50 p-3 rounded-md border border-gray-200">
-                                                <span class="block text-xs font-medium text-gray-500 uppercase mb-1">Proof of Receipt</span>
-                                                <a href="{{ Storage::url($purchase->proof_image) }}" target="_blank" class="text-indigo-600 hover:underline text-sm flex items-center gap-1">
-                                                    <x-heroicon-o-paper-clip class="w-4 h-4" />
-                                                    View Uploaded Image
-                                                </a>
-                                            </div>
-                                        @else
-                                            <div class="space-y-2">
-                                                <x-input-label for="proof_image" :value="__('Upload Proof of Receipt')" required />
-                                                <input
-                                                    id="proof_image"
-                                                    type="file"
-                                                    name="proof_image"
-                                                    accept="image/*"
-                                                    required
-                                                    class="block w-full text-sm text-gray-500
-                                                        file:mr-4 file:py-2 file:px-4
-                                                        file:rounded-md file:border-0
-                                                        file:text-sm file:font-semibold
-                                                        file:bg-indigo-50 file:text-indigo-700
-                                                        hover:file:bg-indigo-100"
-                                                />
-                                                <p class="text-xs text-gray-500">Image (JPG, PNG) max 2MB.</p>
-                                                <x-input-error :messages="$errors->get('proof_image')" class="mt-2" />
-                                            </div>
-                                        @endif
+                                            <form
+                                                action="{{ route('purchases.mark-received', $purchase) }}"
+                                                method="POST"
+                                                enctype="multipart/form-data"
+                                                x-data="{ submitting: false }"
+                                                @submit="submitting = true"
+                                            >
+                                                @csrf
+                                                @method('PATCH')
 
-                                        @if($purchase->invoice_number && $purchase->proof_image)
-                                            <p class="text-xs text-green-600 mt-3 font-medium flex items-center">
-                                                <x-heroicon-o-check-circle class="w-4 h-4 mr-1" />
-                                                Data complete. Ready to receive.
-                                            </p>
-                                        @endif
+                                                <div class="space-y-4">
+                                                    <!-- Invoice Section -->
+                                                    @if($purchase->invoice_number)
+                                                        <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                                                            <span class="block text-xs font-medium text-emerald-600 uppercase tracking-wide">Invoice Number</span>
+                                                            <span class="text-sm font-semibold text-gray-900">{{ $purchase->invoice_number }}</span>
+                                                        </div>
+                                                    @else
+                                                        <div class="space-y-1.5">
+                                                            <label for="invoice_number" class="block text-sm font-medium text-gray-700">Final Invoice Number <span class="text-red-500">*</span></label>
+                                                            <input
+                                                                type="text"
+                                                                id="invoice_number"
+                                                                name="invoice_number"
+                                                                value="{{ old('invoice_number') }}"
+                                                                required
+                                                                placeholder="INV...."
+                                                                class="block w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-300 focus:bg-white transition-all"
+                                                            />
+                                                            <x-input-error :messages="$errors->get('invoice_number')" class="mt-1" />
+                                                        </div>
+                                                    @endif
+
+                                                    <!-- Proof Section -->
+                                                    @if($purchase->proof_image)
+                                                        <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                                                            <span class="block text-xs font-medium text-emerald-600 uppercase tracking-wide mb-1">Proof of Receipt</span>
+                                                            <a href="{{ Storage::url($purchase->proof_image) }}" target="_blank" class="text-emerald-700 hover:underline text-sm flex items-center gap-1">
+                                                                <x-heroicon-o-paper-clip class="w-4 h-4" />
+                                                                View Uploaded Image
+                                                            </a>
+                                                        </div>
+                                                    @else
+                                                        <div class="space-y-1.5">
+                                                            <label for="proof_image" class="block text-sm font-medium text-gray-700">Upload Proof of Receipt <span class="text-red-500">*</span></label>
+                                                            <input
+                                                                id="proof_image"
+                                                                type="file"
+                                                                name="proof_image"
+                                                                accept="image/*"
+                                                                required
+                                                                class="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 transition-all cursor-pointer"
+                                                            />
+                                                            <p class="text-xs text-gray-400">Image (JPG, PNG) max 2MB.</p>
+                                                            <x-input-error :messages="$errors->get('proof_image')" class="mt-1" />
+                                                        </div>
+                                                    @endif
+
+                                                    @if($purchase->invoice_number && $purchase->proof_image)
+                                                        <p class="text-xs text-emerald-600 font-medium flex items-center gap-1">
+                                                            <x-heroicon-o-check-circle class="w-4 h-4" />
+                                                            Data complete. Ready to receive.
+                                                        </p>
+                                                    @endif
+                                                </div>
+
+                                                <div class="mt-5 flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5">
+                                                    <button type="button" @click="open = false" x-bind:disabled="submitting"
+                                                        class="inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-all focus:outline-none focus:ring-2 focus:ring-gray-300 disabled:opacity-50">
+                                                        <svg class="w-4 h-4 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                        Batal
+                                                    </button>
+                                                    <button type="submit" x-bind:disabled="submitting"
+                                                        class="inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 shadow-sm shadow-emerald-200 active:scale-[0.98] transition-all focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-1 disabled:opacity-60 disabled:cursor-not-allowed">
+                                                        <svg x-show="submitting" class="animate-spin -ml-0.5 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                        </svg>
+                                                        <svg x-show="!submitting" class="w-4 h-4 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                                        </svg>
+                                                        {{ __('Confirm Receipt') }}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
-
-                                    <div class="mt-6 flex justify-end gap-3">
-                                        <x-secondary-button type="button" @click="open = false" x-bind:disabled="submitting">
-                                            Cancel
-                                        </x-secondary-button>
-                                        <x-primary-button
-                                            class="!bg-green-600 hover:!bg-green-700 focus:!ring-green-500"
-                                            x-bind:class="submitting ? 'opacity-75 cursor-not-allowed' : ''"
-                                            x-bind:disabled="submitting"
-                                        >
-                                            <svg x-show="submitting" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                            </svg>
-                                            {{ __('Confirm Receipt') }}
-                                        </x-primary-button>
-                                    </div>
-                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -345,41 +379,96 @@
 
                 @endif
 
-                <!-- Shared Confirmation Modal -->
-                <x-modal name="confirmation-modal">
-                    <div class="p-6" x-data="{ submitting: false }">
-                        <h2 class="text-lg font-medium text-gray-900" x-text="modalTitle"></h2>
+                <!-- Shared Confirmation Modal (Premium) -->
+                <div
+                    x-show="$dispatch !== undefined"
+                    x-data="{ modalShow: false, submitting: false }"
+                    x-on:open-modal.window="if ($event.detail.name === 'confirmation-modal') modalShow = true"
+                    x-on:close-modal.window="if ($event.detail.name === 'confirmation-modal') modalShow = false"
+                    x-on:keydown.escape.window="modalShow = false; submitting = false"
+                    class="relative z-[200]"
+                    style="display: block;"
+                >
+                    <!-- Backdrop -->
+                    <div
+                        x-show="modalShow"
+                        x-transition:enter="ease-out duration-300"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="ease-in duration-200"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        class="fixed inset-0 backdrop-blur-sm bg-black/40 z-[199]"
+                        style="display: none;"
+                    ></div>
 
-                        <p class="mt-1 text-sm text-gray-600" x-text="modalMessage"></p>
+                    <div x-show="modalShow" class="fixed inset-0 z-[200] overflow-y-auto" style="display: none;">
+                        <div class="flex min-h-full items-center justify-center p-4">
+                            <div
+                                x-show="modalShow"
+                                x-transition:enter="ease-out duration-300"
+                                x-transition:enter-start="opacity-0 scale-90 translate-y-4"
+                                x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                                x-transition:leave="ease-in duration-200"
+                                x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                                x-transition:leave-end="opacity-0 scale-90 translate-y-4"
+                                class="relative w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/5"
+                                @click.away="modalShow = false"
+                            >
+                                <!-- Dynamic accent bar -->
+                                <div class="h-1 w-full bg-gradient-to-r from-sky-500 to-indigo-600"></div>
 
-                        <div class="mt-6 flex justify-end">
-                            <x-secondary-button x-on:click="$dispatch('close-modal', { name: 'confirmation-modal' })" x-bind:disabled="submitting">
-                                {{ __('Cancel') }}
-                            </x-secondary-button>
+                                <div class="p-6">
+                                    <div class="flex items-start gap-4">
+                                        <div class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-amber-50 border-2 border-amber-100">
+                                            <svg class="w-6 h-6 text-amber-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1 pt-0.5">
+                                            <h3 class="text-base font-semibold text-gray-900" x-text="modalTitle"></h3>
+                                            <p class="mt-1.5 text-sm text-gray-500 leading-relaxed" x-text="modalMessage"></p>
+                                        </div>
+                                    </div>
 
-                            <form id="confirmation-form" method="POST" class="ml-3" x-ref="confirmForm" @submit.prevent>
-                                @csrf
-                                <input type="hidden" id="confirmation-method" name="_method" value="">
+                                    <div class="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5">
+                                        <button
+                                            type="button"
+                                            @click="modalShow = false; submitting = false"
+                                            x-bind:disabled="submitting"
+                                            class="inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 hover:bg-gray-100 hover:border-gray-300 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-gray-300 disabled:opacity-50"
+                                        >
+                                            <svg class="w-4 h-4 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                            Batal
+                                        </button>
 
-                                <button
-                                    type="button"
-                                    class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 text-white shadow-sm bg-primary"
-                                    x-bind:class="confirmButtonClass + (submitting ? ' opacity-75 cursor-not-allowed' : '')"
-                                    x-bind:disabled="submitting"
-                                    @click="submitting = true; $refs.confirmForm.submit()"
-                                >
-                                    <svg x-show="submitting" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    <span x-text="confirmButtonText"></span>
-                                </button>
-                            </form>
+                                        <form id="confirmation-form" method="POST" x-ref="confirmFormPurchase" @submit.prevent>
+                                            @csrf
+                                            <input type="hidden" id="confirmation-method" name="_method" value="">
+                                            <button
+                                                type="button"
+                                                x-bind:disabled="submitting"
+                                                @click="submitting = true; document.getElementById('confirmation-form').submit()"
+                                                class="inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 shadow-sm shadow-sky-200 active:scale-[0.98] transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-1 disabled:opacity-60 disabled:cursor-not-allowed"
+                                            >
+                                                <svg x-show="submitting" class="animate-spin -ml-0.5 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                <svg x-show="!submitting" class="w-4 h-4 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                                </svg>
+                                                <span x-text="confirmButtonText"></span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </x-modal>
+                </div>
 
             </div>
-        </div>
-    </div>
 </x-app-layout>

@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('finance_categories', function (Blueprint $table) {
+        if (!Schema::hasTable('finance_categories')) {
+            Schema::create('finance_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
             $table->string('slug', 150)->unique();
@@ -19,6 +20,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

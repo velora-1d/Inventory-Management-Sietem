@@ -5,6 +5,7 @@ export default {
     presets: [
         require("./vendor/power-components/livewire-powergrid/tailwind.config.js"),
     ],
+    darkMode: 'class',
     content: [
         "./vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php",
         "./storage/framework/views/*.php",
@@ -19,7 +20,9 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ["Inter", ...defaultTheme.fontFamily.sans],
+                sans: ["DM Sans", ...defaultTheme.fontFamily.sans],
+                headline: ["Red Hat Display", ...defaultTheme.fontFamily.sans],
+                mono: ["Fira Code", ...defaultTheme.fontFamily.mono],
             },
             colors: {
                 border: "hsl(var(--border))",

@@ -1,135 +1,175 @@
-# ✨ Comprehensive Inventory Management System
+# 📦 Inventory Management System (Sistem Manajemen Inventaris)
 
-A robust, enterprise-grade **Inventory Management System** built with **Laravel 12** and **Livewire**. Designed specifically to streamline inventory tracking, sales, purchasing processes, and financial ledger management with dynamic localization.
+<div align="center">
 
-![Dashboard Preview](public/images/screenshot.png)
+![Velora Banner](https://img.shields.io/badge/Project_by-Velora-purple?style=for-the-badge)
+![Developer](https://img.shields.io/badge/Developer-Mahin_Utsman_Nawawi%2C_S.H.-blue?style=for-the-badge)
+![Laravel Version](https://img.shields.io/badge/Laravel-12.x-red?style=for-the-badge&logo=laravel)
+![PHP Version](https://img.shields.io/badge/PHP-%5E8.2-777BB4?style=for-the-badge&logo=php)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-## 🌟 Key Modules & Features
-
-- **📊 Advanced Analytics Dashboard**
-  - Real-time Total Sales & Net Cash Flow tracking.
-  - Interactive ApexCharts for Sales & Cash Flow trends.
-  - Quick insights: Top Selling Products, Top Customers, and Low Stock Alerts.
-
-- **💳 Sales & POS (Point of Sale)**
-  - Fast, intuitive POS interface designed for rapid checkouts.
-  - Support for Global Discounts, Exact Cash computation, and Change tracking.
-  - Direct integration with Invoice/Receipt printing.
-  - Persistent cart state across sessions.
-
-- **📦 Purchases & Receiving**
-  - End-to-end Purchase Order workflow.
-  - Seamless "Receive Items" action that updates real inventory balances automatically.
-  - Supplier tracking and history filtering.
-
-- **🗃️ Master Data Management**
-  - **Products**: Manage stock, pricing (Buy/Sell margins), and associations.
-  - **Categories & Units**: Structured tagging for efficient reporting.
-  - **Customers & Suppliers**: Comprehensive contact books integrated globally.
-
-- **💰 Finance Ledger & Cash Flow**
-  - Integrated Double-entry style tracking for all Income and Expenses.
-  - Dynamic Cash Flow reporting mapping POS sales to Income and Purchases to Expenses automatically.
-  - Custom Income/Expense categorization.
-
-- **⚙️ Dynamic Localization & Settings**
-  - Global Store Information management.
-  - **Fully Dynamic Currency Framework**: Customizable currency symbols, positions (left/right), thousands separators, decimal separators, and fractional precision. Changes apply globally to charts, tables, inputs, and receipts instantly.
-
-## 🛠️ Tech Stack & Library Used
-
-- **Framework**: Laravel 12.x
-- **Frontend/Reactivity**: Laravel Livewire 3 + Alpine.js
-- **Styling**: Tailwind CSS (Shadcn-inspired components)
-- **Data Tables**: Livewire PowerGrid (with customized AJAX filters)
-- **Charts**: ApexCharts
-- **Icons**: Blade Heroicons
-- **Database**: MySQL
-
-## 🚀 Quick Start
-
-Follow these steps to set up the project locally for development or testing.
-
-### Prerequisites
-- PHP 8.2 or higher
-- Composer
-- Node.js & NPM
-- MySQL Database
-
-### Installation Steps
-
-1. **Clone the repository:**
-    ```bash
-    git clone https://github.com/fajarghifar/inventory-management-system.git
-    ```
-
-2. **Navigate to the project folder:**
-    ```bash
-    cd inventory-management-system
-    ```
-
-3. **Install PHP dependencies:**
-    ```bash
-    composer install
-    ```
-
-4. **Copy `.env` configuration:**
-    ```bash
-    cp .env.example .env
-    ```
-
-5. **Generate application key:**
-    ```bash
-    php artisan key:generate
-    ```
-
-6. **Configure your Database:**
-    Open the `.env` file and set up your MySQL connection credentials:
-    ```env
-    DB_CONNECTION=mysql
-    DB_HOST=127.0.0.1
-    DB_PORT=3306
-    DB_DATABASE=your_database_name
-    DB_USERNAME=root
-    DB_PASSWORD=
-    ```
-
-7. **Run database migrations and seeders:**
-    This command will migrate all tables and inject default users, settings, products, and categories.
-    ```bash
-    php artisan migrate:fresh --seed
-    ```
-
-8. **Link storage for media/image files:**
-    ```bash
-    php artisan storage:link
-    ```
-
-9. **Install node modules and compile assets:**
-    ```bash
-    npm install
-    npm run build
-    ```
-
-10. **Start the Laravel development server:**
-    ```bash
-    php artisan serve
-    ```
-
-11. **Login using the default admin credentials:**
-    - **Username:** `admin`
-    - **Password:** `password`
-
-## 💡 Contributing
-
-Have ideas to improve the system? Architecture enhancements, UI tweaks, or bug reports are welcome!
-- Submit a **Pull Request (PR)**
-- Create an **Issue** for feature requests or structural bugs
-
-## 📄 License
-
-Licensed under the [MIT License](LICENSE).
+</div>
 
 ---
 
-> Crafted by [Fajar Ghifar](https://github.com/fajarghifar) &nbsp;&middot;&nbsp; [YouTube](https://www.youtube.com/@fajarghifar) &nbsp;&middot;&nbsp; [Instagram](https://instagram.com/fajarghifar) &nbsp;&middot;&nbsp; [LinkedIn](https://www.linkedin.com/in/fajarghifar/)
+Sistem Manajemen Inventaris (Inventory Management System) adalah aplikasi berbasis web enterprise-grade yang dirancang untuk mengelola stok barang, transaksi penjualan (POS), pembelian ke supplier, pencatatan arus kas keuangan (buku kas), serta laporan analitik secara real-time. 
+
+Proyek ini dibangun secara khusus untuk **Velora** dan dikembangkan sepenuhnya oleh **Mahin Utsman Nawawi, S.H.** menggunakan teknologi modern Laravel 12 dan TALL Stack (Tailwind, Alpine, Laravel, Livewire).
+
+---
+
+## 👥 Profil Proyek
+
+*   **Pemilik / Publisher:** **Velora**
+*   **Lead Developer:** **Mahin Utsman Nawawi, S.H.**
+*   **Tujuan:** Menyediakan sistem kasir (POS) dan pengelolaan gudang yang modern, cepat, akurat, dan mudah digunakan untuk mendukung efisiensi operasional bisnis.
+
+---
+
+## 🌟 Daftar Modul & Menu Sidebar
+
+Berikut adalah daftar menu utama yang terdapat pada sidebar aplikasi beserta fungsi dan rute teknisnya:
+
+| Grup Sidebar | Menu Utama | Deskripsi Fungsi | Rute Teknis (`route()`) |
+| :--- | :--- | :--- | :--- |
+| **Utama** | 📊 Dashboard | Menampilkan ringkasan analitik keuangan real-time (Penjualan, Arus Kas Bersih, Profit) serta grafik tren penjualan harian/bulanan (ApexCharts) dan peringatan stok menipis. | `dashboard` |
+| **Transaksi** | 💳 POS (Kasir) | Antarmuka kasir yang responsif untuk transaksi penjualan cepat. Mendukung diskon global, kalkulasi kembalian otomatis, struk belanja, dan state keranjang belanja persisten. | `sales.create` |
+| | 🧾 Daftar Penjualan | Log riwayat seluruh transaksi penjualan, detail pesanan, opsi cetak ulang invoice, dan pencarian transaksi. | `sales.index` |
+| | 🛍️ Daftar Pembelian | Manajemen Purchase Order (PO) ke pemasok dan pencatatan penerimaan barang untuk memperbarui stok fisik gudang. | `purchases.index` |
+| **Kontak & Rekan**| 👥 Pelanggan (Customers) | Basis data kontak pelanggan untuk pelacakan transaksi penjualan. | `customers.index` |
+| | 🏢 Pemasok (Suppliers) | Rekaman data supplier guna mempermudah pemesanan stok barang. | `suppliers.index` |
+| **Katalog Produk** | 📦 Produk Barang | Manajemen detail barang, stok produk, harga beli/jual, margin profit, serta unggahan gambar produk. | `products.index` |
+| | 🏷️ Kategori Produk | Pengelompokan produk secara terstruktur agar pencarian dan laporan lebih efisien. | `categories.index` |
+| | ⚖️ Satuan Barang | Konfigurasi ukuran kuantitas produk (misalnya: Pcs, Kilogram, Pack, Liter, Box). | `units.index` |
+| **Keuangan** | 💵 Transaksi Keuangan | Pencatatan pemasukan dan pengeluaran kas manual di luar transaksi penjualan/pembelian otomatis. | `finance.transactions.index`|
+| | 📂 Kategori Transaksi | Penggolongan jenis pemasukan dan pengeluaran keuangan untuk mempermudah analisis laba/rugi. | `finance.categories.index` |
+| **Sistem & Akses**| 👤 Pengguna (Users) | Manajemen hak akses pengguna sistem (administrator, kasir, staff gudang). | `users.index` |
+| | ⚙️ Pengaturan | Konfigurasi profil toko serta format mata uang dinamis (posisi simbol, pemisah ribuan, pemisah desimal, presisi angka) secara instan dan global. | `settings.index` |
+
+---
+
+## 🛠️ Stack Teknologi
+
+Sistem ini didesain menggunakan teknologi terkini untuk menjamin performa dan skalabilitas tinggi:
+
+*   **Backend Framework:** Laravel 12.x
+*   **Frontend Reactivity:** Livewire 3 + Alpine.js
+*   **UI & CSS Framework:** Tailwind CSS (Desain modern terinspirasi oleh Shadcn UI)
+*   **Tabel Data:** Livewire PowerGrid (Dilengkapi pencarian instan dan AJAX filter)
+*   **Visualisasi Data:** ApexCharts
+*   **Paket Icon:** Blade Heroicons
+*   **Database:** SQLite (default) / MySQL
+
+---
+
+## 🚀 Panduan Instalasi & Setup
+
+Ikuti langkah-langkah di bawah ini untuk memasang proyek ini di komputer lokal Anda.
+
+### Prasyarat Sebelum Instalasi
+Pastikan sistem Anda telah terpasang:
+*   PHP >= 8.2
+*   Composer
+*   Node.js (versi LTS direkomendasikan) & NPM
+*   Database (SQLite / MySQL)
+
+---
+
+### Langkah 1: Kloning Repositori
+Kloning repositori proyek ini ke komputer Anda:
+```bash
+git clone https://github.com/fajarghifar/inventory-management-system.git
+cd inventory-management-system
+```
+
+### Langkah 2: Cara Instalasi Otomatis (Direkomendasikan)
+Proyek ini menyediakan script setup otomatis di `composer.json` yang akan melakukan instalasi dependensi PHP & JS, menyalin konfigurasi `.env`, membuat kunci aplikasi, dan menjalankan migrasi database:
+```bash
+composer run setup
+```
+
+---
+
+### Langkah Manual (Alternatif)
+Jika Anda ingin melakukan konfigurasi langkah demi langkah secara manual, silakan ikuti petunjuk berikut:
+
+1. **Pasang Dependensi PHP:**
+   ```bash
+   composer install
+   ```
+
+2. **Salin File Konfigurasi Environment:**
+   ```bash
+   cp .env.example .env
+   ```
+
+3. **Buat Application Key:**
+   ```bash
+   php artisan key:generate
+   ```
+
+4. **Konfigurasi Database:**
+   Buka file `.env` di editor teks Anda. Jika Anda ingin menggunakan SQLite (default), pastikan konfigurasinya seperti berikut:
+   ```env
+   DB_CONNECTION=sqlite
+   ```
+   *Catatan: Pastikan file `database/database.sqlite` sudah dibuat atau biarkan aplikasi membuatnya saat migrasi.*
+
+   Jika Anda ingin menggunakan MySQL, ubah konfigurasinya menjadi:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=nama_database_anda
+   DB_USERNAME=username_mysql_anda
+   DB_PASSWORD=password_mysql_anda
+   ```
+
+5. **Jalankan Migrasi Database dan Seed Data:**
+   Perintah ini akan membuat semua tabel database dan mengisi data contoh bawaan (produk, kategori, mata uang, dan akun admin):
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
+
+6. **Buat Symbolic Link untuk Media / Upload:**
+   ```bash
+   php artisan storage:link
+   ```
+
+7. **Pasang Dependensi Frontend & Compile Asset:**
+   ```bash
+   npm install
+   npm run build
+   ```
+
+---
+
+### Langkah 3: Menjalankan Server Pengembangan
+
+Setelah semua terinstal, jalankan server pengembangan menggunakan perintah bawaan:
+```bash
+composer run dev
+```
+*Perintah di atas akan menjalankan Laravel Server (serve), Vite compiler, Queue listener, dan Log listener secara bersamaan menggunakan paket `concurrently`.*
+
+Akses sistem di browser Anda melalui alamat: **`http://localhost:8000`** atau **`http://127.0.0.1:8000`**.
+
+---
+
+## 🔑 Informasi Akun Demo / Default
+
+Gunakan akun berikut untuk masuk ke dashboard sistem pertama kali setelah menjalankan seeder:
+
+*   **Username / Email:** `admin` (atau `admin@admin.com`)
+*   **Password:** `password`
+
+---
+
+## 📝 Lisensi
+Proyek ini didistribusikan di bawah lisensi **MIT License**. Lihat file [LICENSE](LICENSE) untuk informasi lebih lanjut.
+
+---
+
+<div align="center">
+  <p>Dibuat dengan ❤️ untuk <b>Velora</b> oleh <b>Mahin Utsman Nawawi, S.H.</b></p>
+</div>

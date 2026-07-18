@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sales', function (Blueprint $table) {
+        if (!Schema::hasTable('sales')) {
+            Schema::create('sales', function (Blueprint $table) {
             $table->id();
             $table->string('invoice_number')->unique();
             $table->foreignId('customer_id')->nullable()->constrained('customers')->restrictOnDelete();
@@ -29,6 +30,7 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

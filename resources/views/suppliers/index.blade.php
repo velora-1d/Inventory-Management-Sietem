@@ -11,11 +11,7 @@
         </div>
     </x-slot>
 
-    <div class="py-4">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <livewire:suppliers.supplier-table />
-        </div>
-    </div>
+    <livewire:suppliers.supplier-table />
 
     <livewire:suppliers.supplier-form />
     <livewire:suppliers.supplier-detail />

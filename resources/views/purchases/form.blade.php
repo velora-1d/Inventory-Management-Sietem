@@ -40,25 +40,66 @@
         </div>
 
         <!-- Proof Image -->
-        <div class="space-y-2">
+        <div class="space-y-2" x-data="{
+            fileName: '',
+            selectFile(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const maxMB = 2;
+                if (file.size > maxMB * 1024 * 1024) {
+                    this.fileName = '';
+                    e.target.value = '';
+                    window.dispatchEvent(new CustomEvent('toast', {
+                        detail: { message: 'Ukuran file terlalu besar. Maksimal ' + maxMB + 'MB.', type: 'error' }
+                    }));
+                    return;
+                }
+                if (!file.type.startsWith('image/')) {
+                    this.fileName = '';
+                    e.target.value = '';
+                    window.dispatchEvent(new CustomEvent('toast', {
+                        detail: { message: 'File harus berupa gambar (JPG, PNG, dll).', type: 'error' }
+                    }));
+                    return;
+                }
+                this.fileName = file.name;
+                window.dispatchEvent(new CustomEvent('toast', {
+                    detail: { message: 'Gambar berhasil dipilih: ' + file.name, type: 'success' }
+                }));
+            }
+        }">
             <x-input-label for="proof_image" :value="__('Proof of Receipt')" />
-            <input
-                id="proof_image"
-                type="file"
-                name="proof_image"
-                accept="image/*"
-                class="block w-full text-sm text-gray-500
-                    file:mr-4 file:py-2 file:px-4
-                    file:rounded-md file:border-0
-                    file:text-sm file:font-semibold
-                    file:bg-indigo-50 file:text-indigo-700
-                    hover:file:bg-indigo-100"
-            />
+
+            <label for="proof_image"
+                class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 hover:bg-sky-50 hover:border-sky-300 cursor-pointer transition-all group">
+                <div class="flex flex-col items-center justify-center gap-1" x-show="!fileName">
+                    <svg class="w-6 h-6 text-gray-400 group-hover:text-sky-500 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                    </svg>
+                    <span class="text-xs text-gray-500 group-hover:text-sky-600 font-medium">Klik untuk upload gambar</span>
+                    <span class="text-xs text-gray-400">JPG, PNG — maks. 2MB</span>
+                </div>
+                <div class="flex items-center gap-2" x-show="fileName" style="display:none;">
+                    <svg class="w-5 h-5 text-emerald-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                    </svg>
+                    <span class="text-xs font-medium text-emerald-700" x-text="fileName"></span>
+                </div>
+                <input
+                    id="proof_image"
+                    type="file"
+                    name="proof_image"
+                    accept="image/*"
+                    class="hidden"
+                    @change="selectFile($event)"
+                />
+            </label>
+
             <x-input-error :messages="$errors->get('proof_image')" />
 
             <div class="mt-2">
                 @if(isset($purchase) && $purchase->proof_image)
-                    <img src="{{ Storage::url($purchase->proof_image) }}" class="h-20 w-auto rounded border border-gray-200 object-cover">
+                    <img src="{{ Storage::url($purchase->proof_image) }}" class="h-20 w-auto rounded-lg border border-gray-200 object-cover">
                 @endif
             </div>
         </div>
@@ -139,7 +180,7 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <template x-for="(item, index) in items" :key="item.key">
-                            <tr :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-50'" class="hover:bg-indigo-50 transition-colors group">
+                            <tr :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-50'" class="hover:bg-sky-50 transition-colors group">
                                 <!-- Product Name -->
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900" x-text="item.product_name"></div>
@@ -156,7 +197,7 @@
                                         :name="`items[${index}][quantity]`"
                                         x-model.number="item.quantity"
                                         @input="calculateLine(index)"
-                                        class="w-20 text-center border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-sm"
+                                        class="w-20 text-center border-gray-300 rounded-md focus:ring-sky-500 focus:border-sky-500 text-sm shadow-sm"
                                         min="1"
                                         placeholder="1"
                                     >
@@ -216,7 +257,7 @@
                                             type="text"
                                             x-model="display"
                                             @input="update($event)"
-                                            class="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                                            class="focus:ring-sky-500 focus:border-sky-500 block w-full sm:text-sm border-gray-300 rounded-md"
                                             :class="window.currencyPosition === 'left' ? 'pl-8 pr-2 text-right' : 'pr-8 pl-2 text-left'"
                                             placeholder="0"
                                         >
@@ -277,7 +318,7 @@
                                             type="text"
                                             x-model="display"
                                             @input="update($event)"
-                                            class="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                                            class="focus:ring-sky-500 focus:border-sky-500 block w-full sm:text-sm border-gray-300 rounded-md"
                                             :class="window.currencyPosition === 'left' ? 'pl-8 pr-2 text-right' : 'pr-8 pl-2 text-left'"
                                             placeholder="0"
                                         >

@@ -8,12 +8,16 @@ use Livewire\Component;
 use App\Models\Category;
 use App\Models\Unit;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 use Illuminate\Validation\Rule;
 use App\Services\ProductService;
 use App\Exceptions\ProductException;
+use Illuminate\Support\Facades\Storage;
 
 class ProductForm extends Component
 {
+    use WithFileUploads;
+
     public bool $isEditing = false;
     public ?Product $product = null;
 
@@ -29,6 +33,10 @@ class ProductForm extends Component
     public bool $is_active = true;
     public string $description = '';
     public string $notes = '';
+
+    // File Upload properties
+    public $imageFile;
+    public ?string $image = null;
 
     // Select Options (Removed for AJAX)
     public ?string $categoryName = null;
@@ -47,7 +55,7 @@ class ProductForm extends Component
     #[On('create-product')]
     public function create(): void
     {
-        $this->reset(['sku', 'name', 'category_id', 'unit_id', 'purchase_price', 'selling_price', 'quantity', 'min_stock', 'description', 'notes', 'product', 'isEditing', 'categoryName', 'unitName']);
+        $this->reset(['sku', 'name', 'category_id', 'unit_id', 'purchase_price', 'selling_price', 'quantity', 'min_stock', 'description', 'notes', 'product', 'isEditing', 'categoryName', 'unitName', 'image', 'imageFile']);
         $this->is_active = true;
 
         $this->dispatch('open-modal', name: 'product-form-modal');
@@ -68,6 +76,8 @@ class ProductForm extends Component
         $this->is_active = $product->is_active;
         $this->description = $product->description ?? '';
         $this->notes = $product->notes ?? '';
+        $this->image = $product->image;
+        $this->imageFile = null;
 
         // Set initial labels for TomSelect
         $this->categoryName = $product->category ? $product->category->name : null;
@@ -97,12 +107,25 @@ class ProductForm extends Component
             'is_active' => ['boolean'],
             'description' => ['nullable', 'string'],
             'notes' => ['nullable', 'string'],
+            'imageFile' => ['nullable', 'image', 'max:2048'], // 2MB max
+            'image' => ['nullable', 'string'],
         ];
     }
 
     public function save(ProductService $service): void
     {
         $validated = $this->validate();
+
+        // Handle Image Upload
+        if ($this->imageFile) {
+            // Delete old image if it exists
+            if ($this->product && $this->product->image) {
+                Storage::disk('public')->delete($this->product->image);
+            }
+            $validated['image'] = $this->imageFile->store('products', 'public');
+        } else {
+            $validated['image'] = $this->image;
+        }
 
         $data = ProductData::fromArray($validated);
 

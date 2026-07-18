@@ -11,11 +11,7 @@
         </div>
     </x-slot>
 
-    <div class="py-4">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <livewire:categories.category-table />
-        </div>
-    </div>
+    <livewire:categories.category-table />
 
     <livewire:categories.category-form />
     <livewire:categories.category-detail />

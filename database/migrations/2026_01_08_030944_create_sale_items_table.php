@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sale_items', function (Blueprint $table) {
+        if (!Schema::hasTable('sale_items')) {
+            Schema::create('sale_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('sale_id')->constrained('sales')->restrictOnDelete();
             $table->foreignId('product_id')->constrained('products')->restrictOnDelete();
@@ -23,6 +24,7 @@ return new class extends Migration
             $table->bigInteger('subtotal'); // final_price * quantity
             $table->timestamps();
         });
+        }
     }
 
     /**

@@ -3,9 +3,12 @@
 namespace App\Livewire\Products;
 
 use App\Models\Product;
+use App\Models\Category;
+use App\Models\Unit;
 use App\Services\ProductService;
 use App\Exceptions\ProductException;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\Facades\Filter;
@@ -47,8 +50,7 @@ final class ProductTable extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return Product::query()
-            ->with(['category', 'unit']);
+        return Product::query()->with(['category', 'unit']);
     }
 
     public function fields(): PowerGridFields
@@ -58,7 +60,28 @@ final class ProductTable extends PowerGridComponent
             ->add('sku')
             ->add('name')
             ->add('name_formatted', function (Product $model) {
-                return $model->is_active ? $model->name : '(DISCONTINUE) ' . $model->name;
+                $statusBadge = $model->is_active ? '' : ' <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-800 ml-2">Discontinue</span>';
+                
+                $imgHtml = '';
+                if ($model->image) {
+                    $imgUrl = Storage::url($model->image);
+                    $imgHtml = "<img src=\"{$imgUrl}\" class=\"w-10 h-10 rounded-lg object-cover bg-gray-50 border border-gray-150 mr-3 shrink-0\">";
+                } else {
+                    $imgHtml = '
+                    <div class="w-10 h-10 rounded-lg border border-gray-200 bg-sky-50 flex items-center justify-center mr-3 shrink-0 text-sky-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                        </svg>
+                    </div>';
+                }
+
+                return "<div class=\"flex items-center\">
+                    {$imgHtml}
+                    <div>
+                        <div class=\"font-semibold text-slate-800\">{$model->name}{$statusBadge}</div>
+                        <div class=\"text-xs text-slate-400 font-medium mt-0.5\">{$model->sku}</div>
+                    </div>
+                </div>";
             })
             ->add('description')
             ->add('category_slug', fn(Product $model) => $model->category ? $model->category->slug : '-')
@@ -90,6 +113,9 @@ final class ProductTable extends PowerGridComponent
     public function columns(): array
     {
         return [
+            Column::make('No.', 'id')
+                ->index(),
+
             Column::action('Action'),
 
             Column::make('ID', 'id')
@@ -165,23 +191,21 @@ final class ProductTable extends PowerGridComponent
     public function filters(): array
     {
         return [
-            Filter::multiSelectAsync('category_name', 'category_id')
-                ->url(route('ajax.categories.search'))
-                ->method('POST')
-                ->optionValue('value')
-                ->optionLabel('text'),
+            Filter::select('category_name', 'category_id')
+                ->dataSource(Category::all())
+                ->optionValue('id')
+                ->optionLabel('name'),
 
-            Filter::multiSelectAsync('unit_symbol', 'unit_id')
-                ->url(route('ajax.units.search'))
-                ->method('POST')
-                ->optionValue('value')
-                ->optionLabel('text'),
+            Filter::select('unit_symbol', 'unit_id')
+                ->dataSource(Unit::all())
+                ->optionValue('id')
+                ->optionLabel('symbol'),
 
-            Filter::multiSelect('is_active_label', 'is_active')
-                ->dataSource(collect([
+            Filter::select('is_active_label', 'is_active')
+                ->dataSource([
                     ['value' => 1, 'text' => 'Active'],
                     ['value' => 0, 'text' => 'Inactive'],
-                ]))
+                ])
                 ->optionValue('value')
                 ->optionLabel('text'),
         ];

@@ -14,11 +14,7 @@
         </div>
     </x-slot>
 
-    <div class="py-4">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <livewire:purchases.purchase-table />
-        </div>
-    </div>
+    <livewire:purchases.purchase-table />
 
     <livewire:components.delete-modal />
 </x-app-layout>

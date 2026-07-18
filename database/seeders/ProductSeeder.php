@@ -145,7 +145,7 @@ class ProductSeeder extends Seeder
                 'sku' => 'P.' . date('ymd') . '.' . strtoupper(Str::random(4)),
                 'name' => $item['n'],
                 'description' => 'Stok tersedia untuk ' . $item['n'],
-                'purchase_price' => $item['p'] * 0.85, // Margin 15%
+                'purchase_price' => (int) round($item['p'] * 0.85), // Margin 15%
                 'selling_price' => $item['p'],
                 'quantity' => rand(10, 100),
                 'min_stock' => 5,

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fira+Code:wght@300..700&family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap');
 @import './../../vendor/power-components/livewire-powergrid/dist/tailwind.css';
 @import "tom-select/dist/css/tom-select.bootstrap5.css";
 @import "flatpickr/dist/flatpickr.min.css";
@@ -9,26 +9,26 @@
 
 @layer base {
     :root {
-        --background: 0 0% 100%;
-        --foreground: 240 10% 3.9%;
-        --card: 0 0% 100%;
-        --card-foreground: 240 10% 3.9%;
+        --background: 210 17% 98%; /* #F9FAFB */
+        --foreground: 220 14% 9.6%; /* #111827 */
+        --card: 0 0% 100%; /* #FFFFFF */
+        --card-foreground: 220 14% 9.6%;
         --popover: 0 0% 100%;
-        --popover-foreground: 240 10% 3.9%;
-        --primary: 240 5.9% 10%;
-        --primary-foreground: 0 0% 98%;
-        --secondary: 240 4.8% 95.9%;
-        --secondary-foreground: 240 5.9% 10%;
-        --muted: 240 4.8% 95.9%;
-        --muted-foreground: 240 3.8% 46.1%;
-        --accent: 240 4.8% 95.9%;
-        --accent-foreground: 240 5.9% 10%;
-        --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 0 0% 98%;
-        --border: 240 5.9% 90%;
-        --input: 240 5.9% 90%;
-        --ring: 240 5.9% 10%;
-        --radius: 0.5rem;
+        --popover-foreground: 220 14% 9.6%;
+        --primary: 221.2 83.2% 53.3%; /* #2563EB */
+        --primary-foreground: 0 0% 100%;
+        --secondary: 142.1 76.2% 36.3%; /* #16A34A */
+        --secondary-foreground: 0 0% 100%;
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215.4 16.3% 46.9%; /* #6B7280 */
+        --accent: 210 40% 96.1%;
+        --accent-foreground: 220 14% 9.6%;
+        --destructive: 0 72.2% 50.6%; /* #DC2626 */
+        --destructive-foreground: 0 0% 100%;
+        --border: 220 13% 91%; /* #E5E7EB */
+        --input: 220 13% 91%; /* #E5E7EB */
+        --ring: 221.2 83.2% 53.3%; /* #2563EB */
+        --radius: 0.5rem; /* 8px */
     }
 
     /* Custom Scrollbar */
@@ -46,13 +46,17 @@
         background-color: theme('colors.gray.300');
         border-radius: theme('borderRadius.full');
     }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Red Hat Display', sans-serif;
+    }
 }
 
 /* Custom Tom Select overrides for Tailwind */
 
 /* Input Control (Trigger) */
 .ts-control {
-    @apply rounded-md border-0 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3 py-2;
+    @apply rounded-md border-0 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6 px-3 py-2;
     min-height: 2.5rem; /* 40px - h-10 */
     background-color: #ffffff !important;
     color: #111827 !important; /* text-gray-900 */
@@ -66,7 +70,7 @@
 
 /* Fix Focus Ring - Apply Tailwind ring when wrapper handles focus */
 .ts-wrapper.focus .ts-control {
-    @apply ring-2 ring-inset ring-indigo-600;
+    @apply ring-2 ring-inset ring-sky-600;
     box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000) !important;
     border-color: transparent;
 }
@@ -89,11 +93,11 @@
 
 /* Selected State (Currently Selected Value) */
 .ts-dropdown .option.selected {
-    @apply font-medium bg-indigo-50 text-indigo-700;
+    @apply font-medium bg-sky-50 text-sky-700;
 }
 
 .ts-dropdown .active.selected {
-    @apply bg-indigo-100 text-indigo-800 !important;
+    @apply bg-sky-100 text-sky-800 !important;
 }
 
 /* Highlighted Match in Search */
@@ -111,3 +115,76 @@
     max-height: 300px !important;
     @apply p-1; /* Add internal padding for options container */
 }
+
+/* ==========================================
+   PowerGrid Table Premium Styling Overrides
+   ========================================== */
+
+/* Table container styling */
+.pg-theme-tailwind-container {
+    @apply border-0 shadow-sm rounded-lg overflow-hidden bg-white !important;
+}
+
+.pg-theme-tailwind-table-container {
+    @apply border-0 !important;
+}
+
+.pg-theme-tailwind-table {
+    @apply border-collapse border-spacing-0 !important;
+}
+
+/* Headers */
+.pg-theme-tailwind-th {
+    @apply bg-slate-50 border-b border-slate-200/80 text-[11px] font-bold tracking-wider text-slate-500 uppercase px-6 py-4 !important;
+    font-family: 'Red Hat Display', sans-serif;
+}
+
+/* Header interactive state */
+.pg-theme-tailwind-th button {
+    @apply font-bold text-slate-500 uppercase hover:text-slate-700 !important;
+}
+
+/* Table rows & cells */
+.pg-theme-tailwind-tr {
+    @apply border-b border-slate-100 hover:bg-blue-50/20 transition-all duration-150 !important;
+}
+
+.pg-theme-tailwind-td {
+    @apply px-6 py-4 text-sm text-slate-600 font-normal align-middle !important;
+}
+
+/* Inline filters row */
+.pg-theme-tailwind-filter-row {
+    @apply bg-slate-50/50 border-b border-slate-100 !important;
+}
+
+.pg-theme-tailwind-filter-row select, 
+.pg-theme-tailwind-filter-row input {
+    @apply rounded-md border-slate-200 text-xs py-1.5 px-3 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-white !important;
+}
+
+/* Customizing the Export and Filter buttons */
+.pg-theme-tailwind-btn-export, 
+.pg-theme-tailwind-btn-filter {
+    @apply inline-flex items-center gap-2 border border-slate-200 bg-white text-slate-700 rounded-md px-3.5 py-2 text-xs font-semibold shadow-sm hover:bg-slate-50 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all !important;
+}
+
+/* Pagination container */
+.pg-theme-tailwind-pagination-container {
+    @apply border-t border-slate-100 bg-white py-4 px-6 flex items-center justify-between !important;
+}
+
+.pg-theme-tailwind-pagination-container select {
+    @apply rounded-md border-slate-200 text-xs py-1.5 focus:ring-2 focus:ring-primary/20 focus:border-primary !important;
+}
+
+.pg-theme-tailwind-pagination-container button {
+    @apply inline-flex items-center justify-center border border-slate-200 bg-white text-slate-600 rounded-md px-3 py-1.5 text-xs font-medium hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all !important;
+}
+
+/* PowerGrid header custom filter styling to ensure uniform widths and sleek design */
+.pg-filter-wrapper select {
+    width: 100% !important;
+    min-width: 100% !important;
+}
+

@@ -4,6 +4,8 @@ namespace App\Livewire\Purchases;
 
 use Carbon\Carbon;
 use App\Models\Purchase;
+use App\Models\Supplier;
+use App\Models\User;
 use App\Enums\PurchaseStatus;
 use App\Services\PurchaseService;
 use App\Exceptions\PurchaseException;
@@ -72,6 +74,9 @@ final class PurchaseTable extends PowerGridComponent
     public function columns(): array
     {
         return [
+            Column::make('No.', 'id')
+                ->index(),
+
             Column::make('ID', 'id')->hidden(),
 
             Column::make('Invoice Number', 'invoice_number')
@@ -108,13 +113,12 @@ final class PurchaseTable extends PowerGridComponent
     public function filters(): array
     {
         return [
-            Filter::multiSelectAsync('supplier_name', 'supplier_id')
-                ->url(route('ajax.suppliers.search'))
-                ->method('POST')
-                ->optionValue('value')
-                ->optionLabel('text'),
+            Filter::select('supplier_name', 'supplier_id')
+                ->dataSource(Supplier::all())
+                ->optionValue('id')
+                ->optionLabel('name'),
 
-            Filter::multiSelect('status', 'status')
+            Filter::select('status', 'status')
                 ->dataSource(collect(PurchaseStatus::cases())->map(fn($status) => [
                     'value' => $status->value,
                     'label' => $status->label(),
@@ -122,11 +126,10 @@ final class PurchaseTable extends PowerGridComponent
                 ->optionLabel('label')
                 ->optionValue('value'),
 
-            Filter::multiSelectAsync('creator_name', 'created_by')
-                ->url(route('ajax.users.search'))
-                ->method('POST')
-                ->optionValue('value')
-                ->optionLabel('text'),
+            Filter::select('creator_name', 'created_by')
+                ->dataSource(User::all())
+                ->optionValue('id')
+                ->optionLabel('name'),
 
             Filter::datepicker('purchase_date_formatted', 'purchase_date')
                 ->params([

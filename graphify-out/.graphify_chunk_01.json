@@ -1,0 +1,487 @@
+{
+  "nodes": [
+    {
+      "id": "inventory_management_system",
+      "label": "Inventory Management System",
+      "type": "concept",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "A robust, enterprise-grade inventory management system built with Laravel 12 and Livewire, covering inventory tracking, sales, purchasing, and financial ledger management."
+    },
+    {
+      "id": "laravel",
+      "label": "Laravel 12",
+      "type": "technology",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "PHP framework (version 12.x) used as the core backend framework of the application."
+    },
+    {
+      "id": "livewire",
+      "label": "Laravel Livewire 3",
+      "type": "technology",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "Full-stack framework for Laravel providing frontend reactivity without writing JavaScript (version 3)."
+    },
+    {
+      "id": "alpine_js",
+      "label": "Alpine.js",
+      "type": "technology",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "Lightweight JavaScript framework used alongside Livewire for frontend interactivity."
+    },
+    {
+      "id": "tailwind_css",
+      "label": "Tailwind CSS",
+      "type": "technology",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "Utility-first CSS framework used for styling, with Shadcn-inspired components."
+    },
+    {
+      "id": "apexcharts",
+      "label": "ApexCharts",
+      "type": "technology",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "JavaScript charting library used for interactive sales and cash flow trend charts on the dashboard."
+    },
+    {
+      "id": "livewire_powergrid",
+      "label": "Livewire PowerGrid",
+      "type": "technology",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "Data table component for Livewire with customized AJAX filters."
+    },
+    {
+      "id": "blade_heroicons",
+      "label": "Blade Heroicons",
+      "type": "technology",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "Icon library used for UI icons throughout the application."
+    },
+    {
+      "id": "mysql",
+      "label": "MySQL",
+      "type": "technology",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "Relational database used as the data store for the application."
+    },
+    {
+      "id": "analytics_dashboard",
+      "label": "Advanced Analytics Dashboard",
+      "type": "feature",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "Module providing real-time total sales, net cash flow tracking, interactive charts, top selling products, top customers, and low stock alerts."
+    },
+    {
+      "id": "pos_module",
+      "label": "Sales & POS (Point of Sale)",
+      "type": "feature",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "Fast POS interface supporting global discounts, exact cash computation, change tracking, invoice/receipt printing, and persistent cart state."
+    },
+    {
+      "id": "purchases_module",
+      "label": "Purchases & Receiving",
+      "type": "feature",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "End-to-end purchase order workflow with receive-items action, supplier tracking, and history filtering."
+    },
+    {
+      "id": "master_data_module",
+      "label": "Master Data Management",
+      "type": "feature",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "Management of Products (stock, pricing), Categories, Units, Customers, and Suppliers."
+    },
+    {
+      "id": "finance_ledger_module",
+      "label": "Finance Ledger & Cash Flow",
+      "type": "feature",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "Integrated double-entry style income and expense tracking with dynamic cash flow reporting and custom categorization."
+    },
+    {
+      "id": "localization_settings",
+      "label": "Dynamic Localization & Settings",
+      "type": "feature",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "Global store information management and fully dynamic currency framework (symbol, position, separators, precision)."
+    },
+    {
+      "id": "fajar_ghifar",
+      "label": "Fajar Ghifar",
+      "type": "person",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "Author and maintainer of the Inventory Management System project. Also known as Fajar Ghifari Nugroho (@fajarghifar)."
+    },
+    {
+      "id": "github_repo",
+      "label": "GitHub Repository",
+      "type": "component",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "Source code repository hosted at https://github.com/fajarghifar/inventory-management-system."
+    },
+    {
+      "id": "mit_license",
+      "label": "MIT License",
+      "type": "concept",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "Open-source license under which the project is distributed."
+    },
+    {
+      "id": "php",
+      "label": "PHP 8.2+",
+      "type": "technology",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "Server-side programming language required (version 8.2 or higher) as a prerequisite."
+    },
+    {
+      "id": "composer",
+      "label": "Composer",
+      "type": "technology",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "PHP dependency manager used to install backend dependencies."
+    },
+    {
+      "id": "nodejs_npm",
+      "label": "Node.js & NPM",
+      "type": "technology",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md",
+      "description": "JavaScript runtime and package manager used for installing frontend dependencies and building assets."
+    },
+    {
+      "id": "robots_txt",
+      "label": "robots.txt",
+      "type": "file",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/robots.txt",
+      "description": "Standard robots exclusion file allowing all web crawlers (User-agent: *, Disallow: empty — no restrictions)."
+    },
+    {
+      "id": "logo_svg",
+      "label": "Application Logo (SVG)",
+      "type": "component",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/images/logo.svg",
+      "description": "SVG logo (500x500px) consisting of three distinct dark (#090909) abstract path shapes forming the application's brand mark."
+    },
+    {
+      "id": "screenshot_dashboard",
+      "label": "Dashboard Screenshot",
+      "type": "component",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/images/screenshot.png",
+      "description": "Promotional screenshot showing the KencanaPOS branded application across three device mockups. Central laptop shows the analytics dashboard with Total Sales (Rp 7.188.000), Gross Profit (Rp 1.018.194), Net Cash Flow, Low Stock Alert counters, a Sales Trend line chart, Income vs Expense bar chart, Recent Sales list, and Expense Breakdown donut chart."
+    },
+    {
+      "id": "kencana_pos_brand",
+      "label": "KencanaPOS Brand",
+      "type": "component",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/images/screenshot.png",
+      "description": "The branded name 'KencanaPOS' visible in the application navigation bar across the screenshot mockups."
+    },
+    {
+      "id": "overview_page",
+      "label": "Overview / Dashboard Page",
+      "type": "component",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/images/screenshot.png",
+      "description": "Main dashboard page titled 'Overview' that monitors business performance at a glance, visible in the central screenshot."
+    },
+    {
+      "id": "sales_trend_chart",
+      "label": "Sales Trend Chart",
+      "type": "component",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/images/screenshot.png",
+      "description": "Line chart on the dashboard displaying daily sales performance trends."
+    },
+    {
+      "id": "expense_breakdown_chart",
+      "label": "Expense Breakdown Chart",
+      "type": "component",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/images/screenshot.png",
+      "description": "Donut/ring chart on the dashboard showing category-wise distribution of expenses (Our Purchase, Product Purchases, Nova Sticking)."
+    },
+    {
+      "id": "income_vs_expense_chart",
+      "label": "Income vs Expense Chart",
+      "type": "component",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/images/screenshot.png",
+      "description": "Bar chart on the dashboard providing a financial overview of income versus expenses."
+    },
+    {
+      "id": "recent_sales_list",
+      "label": "Recent Sales List",
+      "type": "component",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/images/screenshot.png",
+      "description": "Panel on the dashboard listing the latest transactions (e.g. INV.260219.0001 through INV.260219.0005) with their amounts."
+    }
+  ],
+  "edges": [
+    {
+      "source": "inventory_management_system",
+      "target": "laravel",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "inventory_management_system",
+      "target": "livewire",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "inventory_management_system",
+      "target": "alpine_js",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "inventory_management_system",
+      "target": "tailwind_css",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "inventory_management_system",
+      "target": "apexcharts",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "inventory_management_system",
+      "target": "livewire_powergrid",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "inventory_management_system",
+      "target": "blade_heroicons",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "inventory_management_system",
+      "target": "mysql",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "inventory_management_system",
+      "target": "analytics_dashboard",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "inventory_management_system",
+      "target": "pos_module",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "inventory_management_system",
+      "target": "purchases_module",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "inventory_management_system",
+      "target": "master_data_module",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "inventory_management_system",
+      "target": "finance_ledger_module",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "inventory_management_system",
+      "target": "localization_settings",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "laravel",
+      "target": "php",
+      "relation": "depends_on",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "laravel",
+      "target": "composer",
+      "relation": "depends_on",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "laravel",
+      "target": "mysql",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "tailwind_css",
+      "target": "nodejs_npm",
+      "relation": "depends_on",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "analytics_dashboard",
+      "target": "apexcharts",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "fajar_ghifar",
+      "target": "inventory_management_system",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "inventory_management_system",
+      "target": "github_repo",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "inventory_management_system",
+      "target": "mit_license",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "livewire",
+      "target": "livewire_powergrid",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/README.md"
+    },
+    {
+      "source": "robots_txt",
+      "target": "inventory_management_system",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/robots.txt"
+    },
+    {
+      "source": "logo_svg",
+      "target": "inventory_management_system",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/images/logo.svg"
+    },
+    {
+      "source": "screenshot_dashboard",
+      "target": "inventory_management_system",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/images/screenshot.png"
+    },
+    {
+      "source": "screenshot_dashboard",
+      "target": "kencana_pos_brand",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/images/screenshot.png"
+    },
+    {
+      "source": "screenshot_dashboard",
+      "target": "overview_page",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/images/screenshot.png"
+    },
+    {
+      "source": "overview_page",
+      "target": "sales_trend_chart",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/images/screenshot.png"
+    },
+    {
+      "source": "overview_page",
+      "target": "expense_breakdown_chart",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/images/screenshot.png"
+    },
+    {
+      "source": "overview_page",
+      "target": "income_vs_expense_chart",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/images/screenshot.png"
+    },
+    {
+      "source": "overview_page",
+      "target": "recent_sales_list",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/images/screenshot.png"
+    },
+    {
+      "source": "analytics_dashboard",
+      "target": "overview_page",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/images/screenshot.png"
+    },
+    {
+      "source": "fajar_ghifar",
+      "target": "kencana_pos_brand",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/pak-hakim/Hakim/Project/inventory-management-system/public/images/screenshot.png"
+    }
+  ],
+  "hyperedges": [],
+  "input_tokens": 0,
+  "output_tokens": 0
+}
