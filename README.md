@@ -125,6 +125,39 @@ Jika Anda ingin melakukan konfigurasi langkah demi langkah secara manual, silaka
    DB_PASSWORD=password_mysql_anda
    ```
 
+   > **Catatan:** Untuk koneksi MySQL dengan SSL (seperti TiDB Cloud), tambahkan juga:
+   > ```env
+   > MYSQL_ATTR_SSL_CA=/path/ke/cacert.pem
+   > ```
+
+4b. **Konfigurasi S3 / Object Storage (Untuk Penyimpanan File & Gambar Produk):**
+
+   Proyek ini mendukung penyimpanan file (gambar produk, media upload) menggunakan **Amazon S3** atau provider S3-compatible lainnya (seperti MinIO, Cloudflare R2, Backblaze B2, dll).
+
+   Ubah variabel berikut di file `.env` Anda:
+   ```env
+   FILESYSTEM_DISK=s3
+
+   AWS_ACCESS_KEY_ID=your_access_key_id
+   AWS_SECRET_ACCESS_KEY=your_secret_access_key
+   AWS_DEFAULT_REGION=ap-southeast-1
+   AWS_BUCKET=nama_bucket_anda
+   AWS_USE_PATH_STYLE_ENDPOINT=false
+   ```
+
+   Jika menggunakan provider **S3-compatible** (bukan AWS asli, seperti MinIO atau storage custom), tambahkan juga:
+   ```env
+   AWS_ENDPOINT=https://endpoint-provider-anda.com
+   AWS_URL=https://endpoint-provider-anda.com/nama_bucket_anda
+   AWS_USE_PATH_STYLE_ENDPOINT=true
+   ```
+
+   > **Catatan Penting:** Jika Anda **tidak** menggunakan S3, gunakan penyimpanan lokal (default) dengan konfigurasi:
+   > ```env
+   > FILESYSTEM_DISK=local
+   > ```
+   > Kemudian jalankan perintah `php artisan storage:link` untuk membuat symlink ke folder `public/storage`.
+
 5. **Jalankan Migrasi Database dan Seed Data:**
    Perintah ini akan membuat semua tabel database dan mengisi data contoh bawaan (produk, kategori, mata uang, dan akun admin):
    ```bash
