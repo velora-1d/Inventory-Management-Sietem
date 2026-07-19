@@ -81,9 +81,9 @@ class DashboardStatsService
     {
         // Cache for 5 minutes as stock levels change frequently.
         return Cache::remember('dashboard_low_stock', now()->addMinutes(5), function () use ($limit) {
-            return Product::whereColumn('quantity', '<=', 'min_stock')
+            return Product::whereColumn('products.quantity', '<=', 'products.min_stock')
                 ->where('is_active', true)
-                ->orderBy('quantity', 'asc')
+                ->orderBy('products.quantity', 'asc')
                 ->limit($limit)
                 ->get()
                 ->toArray();

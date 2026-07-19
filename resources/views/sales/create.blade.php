@@ -77,10 +77,31 @@
                                             <!-- Qty -->
                                             <td class="px-3 py-2.5 text-center">
                                                 <div class="flex flex-col items-center justify-center">
-                                                    <input type="number" x-model="item.quantity" min="1" :max="item.max_stock"
-                                                        @input="validateQty(index)"
-                                                        class="w-14 text-center border-gray-300 rounded-md focus:ring-sky-500 focus:border-sky-500 text-xs shadow-sm p-1">
-                                                    <span class="text-[9px] text-gray-400 mt-0.5" x-text="item.unit"></span>
+                                                    <div class="flex items-center shadow-sm">
+                                                        <button 
+                                                            type="button" 
+                                                            @click="if(item.quantity > 1) { item.quantity--; validateQty(index); }"
+                                                            class="w-6 h-6 flex items-center justify-center rounded-l-lg border border-r-0 border-slate-200 bg-slate-50/50 hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 transition-all text-xs font-bold select-none focus:outline-none"
+                                                        >
+                                                            -
+                                                        </button>
+                                                        <input 
+                                                            type="number" 
+                                                            x-model="item.quantity" 
+                                                            min="1" 
+                                                            :max="item.max_stock"
+                                                            @input="validateQty(index)"
+                                                            class="w-9 h-6 text-center border-y border-x-0 border-slate-200 focus:ring-0 focus:border-slate-200 text-xs p-0 font-bold text-slate-700 bg-white"
+                                                        >
+                                                        <button 
+                                                            type="button" 
+                                                            @click="if(item.quantity < item.max_stock) { item.quantity++; validateQty(index); }"
+                                                            class="w-6 h-6 flex items-center justify-center rounded-r-lg border border-l-0 border-slate-200 bg-slate-50/50 hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 transition-all text-xs font-bold select-none focus:outline-none"
+                                                        >
+                                                            +
+                                                        </button>
+                                                    </div>
+                                                    <span class="text-[9px] text-gray-400 mt-1 font-semibold uppercase tracking-wider" x-text="item.unit"></span>
                                                 </div>
                                             </td>
                                             <!-- Price -->
@@ -154,20 +175,27 @@
                     <div class="space-y-3 pt-3 border-t border-gray-150">
                         <div class="flex items-center gap-3">
                             <span class="text-xs font-bold text-gray-500 uppercase tracking-wider shrink-0 w-24">Pay Method</span>
-                            <div class="grid grid-cols-2 gap-2 flex-1">
+                            <div class="grid grid-cols-4 gap-2 flex-1">
                                 <button
-                                    @click="payment.method = 'cash'"
+                                    @click="payment.method = 'cash'; saleStatus = 'completed';"
                                     class="px-2 py-1.5 text-xs font-bold rounded-lg border transition-all"
                                     :class="payment.method === 'cash' ? 'bg-sky-600 text-white border-sky-600 shadow-sm' : 'bg-white text-gray-700 border-gray-350 hover:bg-gray-50'"
                                 >
                                     CASH
                                 </button>
                                 <button
-                                    @click="payment.method = 'transfer'"
+                                    @click="payment.method = 'transfer'; saleStatus = 'completed';"
                                     class="px-2 py-1.5 text-xs font-bold rounded-lg border transition-all"
                                     :class="payment.method === 'transfer' ? 'bg-sky-600 text-white border-sky-600 shadow-sm' : 'bg-white text-gray-700 border-gray-350 hover:bg-gray-50'"
                                 >
                                     TRANSFER
+                                </button>
+                                <button
+                                    @click="payment.method = 'qris'; saleStatus = 'pending';"
+                                    class="px-2 py-1.5 text-xs font-bold rounded-lg border transition-all"
+                                    :class="payment.method === 'qris' ? 'bg-sky-600 text-white border-sky-600 shadow-sm' : 'bg-white text-gray-700 border-gray-350 hover:bg-gray-50'"
+                                >
+                                    QRIS
                                 </button>
                             </div>
                         </div>
@@ -190,12 +218,14 @@
                                         >
                                     </div>
                                 </div>
-                                <!-- Quick Cash Options -->
-                                <div class="grid grid-cols-4 gap-1 ml-24">
-                                    <button @click="payment.cash_received = total" class="px-1 py-1 bg-gray-150 hover:bg-gray-200 border border-gray-300 rounded text-[10px] font-semibold text-gray-700">EXACT</button>
-                                    <button @click="payment.cash_received = total + 100000" class="px-1 py-1 bg-gray-150 hover:bg-gray-200 border border-gray-300 rounded text-[10px] font-semibold text-gray-700">+100K</button>
-                                    <button @click="payment.cash_received = total + 50000" class="px-1 py-1 bg-gray-150 hover:bg-gray-200 border border-gray-300 rounded text-[10px] font-semibold text-gray-700">+50K</button>
-                                    <button @click="payment.cash_received = total + 20000" class="px-1 py-1 bg-gray-150 hover:bg-gray-200 border border-gray-300 rounded text-[10px] font-semibold text-gray-700">+20K</button>
+                                <!-- Real-time Change / Insufficient amount display -->
+                                <div class="flex items-center gap-3 mt-2" x-show="payment.cash_received > 0">
+                                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider w-24">Status</span>
+                                    <div class="flex-1 rounded-lg px-3 py-1.5 flex items-center justify-between border transition-all duration-150"
+                                         :class="payment.cash_received >= total ? 'bg-emerald-50/50 border-emerald-100 text-emerald-700' : 'bg-rose-50/50 border-rose-100 text-rose-700'">
+                                        <span class="text-[10px] font-bold uppercase tracking-wider" x-text="payment.cash_received >= total ? 'Kembalian' : 'Kurang'"></span>
+                                        <span class="text-xs font-black" x-text="payment.cash_received >= total ? formatCurrency(payment.cash_received - total) : formatCurrency(total - payment.cash_received)"></span>
+                                    </div>
                                 </div>
                             </div>
                         </template>
@@ -333,6 +363,91 @@
                             </div>
                         </template>
                     </div>
+            <!-- QRIS Iframe Payment Modal (Shadcn-styled) -->
+            <div
+                x-show="showPaymentModal"
+                class="relative z-[250]"
+                style="display: none;"
+                x-on:keydown.escape.window="closePaymentModal()"
+            >
+                <!-- Backdrop with Blur -->
+                <div
+                    x-show="showPaymentModal"
+                    x-transition:enter="ease-out duration-300"
+                    x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100"
+                    x-transition:leave="ease-in duration-200"
+                    x-transition:leave-start="opacity-100"
+                    x-transition:leave-end="opacity-0"
+                    class="fixed inset-0 backdrop-blur-sm bg-black/40 z-[249]"
+                    @click="closePaymentModal()"
+                ></div>
+
+                <div class="fixed inset-0 z-[250] overflow-y-auto">
+                    <div class="flex min-h-full items-center justify-center p-4">
+                        <div
+                            x-show="showPaymentModal"
+                            x-transition:enter="ease-out duration-300"
+                            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave="ease-in duration-200"
+                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                            class="relative w-full max-w-xl overflow-hidden rounded-xl border border-slate-100 bg-white shadow-2xl transition-all"
+                            @click.away="closePaymentModal()"
+                        >
+                            <!-- Modal Header -->
+                            <div class="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-5 py-4">
+                                <div>
+                                    <h3 class="text-sm font-bold text-slate-900 tracking-wide">
+                                        PEMBAYARAN QRIS (VIA PAKASIR)
+                                    </h3>
+                                    <p class="text-[10px] text-slate-400 font-medium uppercase tracking-wider mt-0.5" x-text="'Invoice: ' + paymentInvoice"></p>
+                                </div>
+                                <button
+                                    type="button"
+                                    @click="closePaymentModal()"
+                                    class="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-lg hover:bg-slate-100"
+                                >
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+
+                            <!-- Modal Body (Iframe) -->
+                            <div class="relative bg-slate-50 p-4">
+                                <!-- Spinner/Loading State for iframe -->
+                                <div class="absolute inset-0 flex flex-col items-center justify-center bg-white z-0" x-show="!paymentUrl">
+                                    <svg class="animate-spin h-8 w-8 text-sky-600 mb-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                    <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Memuat Barcode QRIS...</span>
+                                </div>
+                                
+                                <!-- IFrame -->
+                                <template x-if="paymentUrl">
+                                    <iframe
+                                        :src="paymentUrl"
+                                        class="w-full h-[620px] rounded-lg border border-slate-200 bg-white shadow-inner relative z-10"
+                                    ></iframe>
+                                </template>
+                            </div>
+
+                            <!-- Modal Footer -->
+                            <div class="flex items-center justify-between border-t border-slate-100 bg-white px-5 py-3">
+                                <button
+                                    type="button"
+                                    @click="closePaymentModal()"
+                                    class="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all shadow-sm"
+                                >
+                                    Tutup / Batalkan
+                                </button>
+                                <div class="flex items-center gap-2">
+                                    <div class="flex items-center gap-1.5 text-[11px] text-amber-500 font-semibold uppercase tracking-wider">
+                                        <svg class="animate-pulse w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>
+                                        Menunggu Pembayaran...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -358,6 +473,11 @@
                     globalDiscount: 0,
                     saleStatus: 'completed',
                     isSubmitting: false,
+                    showPaymentModal: false,
+                    paymentUrl: '',
+                    paymentInvoice: '',
+                    paymentId: null,
+                    pollingInterval: null,
 
                     // TomSelect Instance
                     customerTs: null,
@@ -646,15 +766,23 @@
 
                             const data = await res.json();
 
-                            if (res.ok && data.success) {
-                                this.$dispatch('close-modal', { name: 'confirmation-modal' });
+                             if (res.ok && data.success) {
+                                 this.$dispatch('close-modal', { name: 'confirmation-modal' });
 
-                                if (data.print_url) {
-                                    window.open(data.print_url, '_blank');
-                                }
+                                 if (data.print_url && !data.checkout_url) {
+                                     window.open(data.print_url, '_blank');
+                                 }
 
-                                this.clearStorage();
-                                this.resetForm();
+                                 this.clearStorage();
+                                 this.resetForm();
+
+                                  if (data.checkout_url) {
+                                      this.paymentUrl = data.checkout_url;
+                                      this.paymentInvoice = data.data.invoice_number;
+                                      this.paymentId = data.data.id;
+                                      this.showPaymentModal = true;
+                                      this.startPaymentPolling(data.data.id);
+                                  }
 
                                 // Update local stocks in catalog list dynamically without reload!
                                 items.forEach(item => {
@@ -688,6 +816,45 @@
                         };
                         this.globalDiscount = 0;
                         this.customerTs && this.customerTs.clear();
+                    },
+
+                    startPaymentPolling(saleId) {
+                        if (this.pollingInterval) {
+                            clearInterval(this.pollingInterval);
+                        }
+
+                        this.pollingInterval = setInterval(async () => {
+                            try {
+                                const response = await fetch(`/sales/${saleId}/status`);
+                                if (!response.ok) return;
+                                const statusData = await response.json();
+
+                                if (statusData.status === 'completed') {
+                                    clearInterval(this.pollingInterval);
+                                    this.pollingInterval = null;
+                                    this.showPaymentModal = false;
+                                    this.paymentUrl = '';
+                                    
+                                    // Open print layout in a new window
+                                    window.open(statusData.print_url, '_blank');
+
+                                    this.$dispatch('toast', { message: 'Pembayaran QRIS Berhasil!', type: 'success' });
+                                }
+                            } catch (error) {
+                                console.error('Error polling payment status:', error);
+                            }
+                        }, 3000);
+                    },
+
+                    closePaymentModal() {
+                        if (this.pollingInterval) {
+                            clearInterval(this.pollingInterval);
+                            this.pollingInterval = null;
+                        }
+                        this.showPaymentModal = false;
+                        this.paymentUrl = '';
+                        this.paymentInvoice = '';
+                        this.paymentId = null;
                     }
                 }
             }

@@ -2,6 +2,9 @@
 @import './../../vendor/power-components/livewire-powergrid/dist/tailwind.css';
 @import "tom-select/dist/css/tom-select.bootstrap5.css";
 @import "flatpickr/dist/flatpickr.min.css";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/inter";
 
 @tailwind base;
 @tailwind components;
@@ -9,26 +12,26 @@
 
 @layer base {
     :root {
-        --background: 210 17% 98%; /* #F9FAFB */
-        --foreground: 220 14% 9.6%; /* #111827 */
-        --card: 0 0% 100%; /* #FFFFFF */
-        --card-foreground: 220 14% 9.6%;
-        --popover: 0 0% 100%;
-        --popover-foreground: 220 14% 9.6%;
-        --primary: 221.2 83.2% 53.3%; /* #2563EB */
-        --primary-foreground: 0 0% 100%;
-        --secondary: 142.1 76.2% 36.3%; /* #16A34A */
-        --secondary-foreground: 0 0% 100%;
-        --muted: 210 40% 96.1%;
-        --muted-foreground: 215.4 16.3% 46.9%; /* #6B7280 */
-        --accent: 210 40% 96.1%;
-        --accent-foreground: 220 14% 9.6%;
-        --destructive: 0 72.2% 50.6%; /* #DC2626 */
+        --background: oklch(0.985 0.008 75); /* #FAF7F2 (Warm Cream) */
+        --foreground: oklch(0.145 0 0); /* #111827 */
+        --card: oklch(1 0 0); /* #FFFFFF */
+        --card-foreground: oklch(0.145 0 0);
+        --popover: oklch(1 0 0);
+        --popover-foreground: oklch(0.145 0 0);
+        --primary: oklch(0.205 0 0); /* #2563EB */
+        --primary-foreground: oklch(0.985 0 0);
+        --secondary: oklch(0.97 0 0); /* #16A34A */
+        --secondary-foreground: oklch(0.205 0 0);
+        --muted: oklch(0.97 0 0);
+        --muted-foreground: oklch(0.556 0 0); /* #6B7280 */
+        --accent: oklch(0.97 0 0);
+        --accent-foreground: oklch(0.205 0 0);
+        --destructive: oklch(0.577 0.245 27.325); /* #DC2626 */
         --destructive-foreground: 0 0% 100%;
-        --border: 220 13% 91%; /* #E5E7EB */
-        --input: 220 13% 91%; /* #E5E7EB */
-        --ring: 221.2 83.2% 53.3%; /* #2563EB */
-        --radius: 0.5rem; /* 8px */
+        --border: oklch(0.922 0 0); /* #E5E7EB */
+        --input: oklch(0.922 0 0); /* #E5E7EB */
+        --ring: oklch(0.708 0 0); /* #2563EB */
+        --radius: 0.625rem; /* 8px */ --chart-1: oklch(0.87 0 0); --chart-2: oklch(0.556 0 0); --chart-3: oklch(0.439 0 0); --chart-4: oklch(0.371 0 0); --chart-5: oklch(0.269 0 0); --sidebar: oklch(0.985 0 0); --sidebar-foreground: oklch(0.145 0 0); --sidebar-primary: oklch(0.205 0 0); --sidebar-primary-foreground: oklch(0.985 0 0); --sidebar-accent: oklch(0.97 0 0); --sidebar-accent-foreground: oklch(0.205 0 0); --sidebar-border: oklch(0.922 0 0); --sidebar-ring: oklch(0.708 0 0);
     }
 
     /* Custom Scrollbar */
@@ -49,6 +52,52 @@
 
     h1, h2, h3, h4, h5, h6 {
         font-family: 'Red Hat Display', sans-serif;
+    }
+  .theme {
+        --font-heading: var(--font-sans);
+        --font-sans: 'Inter Variable', sans-serif;
+    }
+  .dark {
+        --background: oklch(0.145 0 0);
+        --foreground: oklch(0.985 0 0);
+        --card: oklch(0.205 0 0);
+        --card-foreground: oklch(0.985 0 0);
+        --popover: oklch(0.205 0 0);
+        --popover-foreground: oklch(0.985 0 0);
+        --primary: oklch(0.922 0 0);
+        --primary-foreground: oklch(0.205 0 0);
+        --secondary: oklch(0.269 0 0);
+        --secondary-foreground: oklch(0.985 0 0);
+        --muted: oklch(0.269 0 0);
+        --muted-foreground: oklch(0.708 0 0);
+        --accent: oklch(0.269 0 0);
+        --accent-foreground: oklch(0.985 0 0);
+        --destructive: oklch(0.704 0.191 22.216);
+        --border: oklch(1 0 0 / 10%);
+        --input: oklch(1 0 0 / 15%);
+        --ring: oklch(0.556 0 0);
+        --chart-1: oklch(0.87 0 0);
+        --chart-2: oklch(0.556 0 0);
+        --chart-3: oklch(0.439 0 0);
+        --chart-4: oklch(0.371 0 0);
+        --chart-5: oklch(0.269 0 0);
+        --sidebar: oklch(0.205 0 0);
+        --sidebar-foreground: oklch(0.985 0 0);
+        --sidebar-primary: oklch(0.488 0.243 264.376);
+        --sidebar-primary-foreground: oklch(0.985 0 0);
+        --sidebar-accent: oklch(0.269 0 0);
+        --sidebar-accent-foreground: oklch(0.985 0 0);
+        --sidebar-border: oklch(1 0 0 / 10%);
+        --sidebar-ring: oklch(0.556 0 0);
+    }
+  * {
+    @apply border-border;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
+  html {
+    @apply font-sans;
     }
 }
 
@@ -122,7 +171,7 @@
 
 /* Table container styling */
 .pg-theme-tailwind-container {
-    @apply border-0 shadow-sm rounded-lg overflow-hidden bg-white !important;
+    @apply border border-slate-100 shadow-sm rounded-xl overflow-hidden bg-white !important;
 }
 
 .pg-theme-tailwind-table-container {
@@ -130,56 +179,55 @@
 }
 
 .pg-theme-tailwind-table {
-    @apply border-collapse border-spacing-0 !important;
+    @apply border-collapse border-spacing-0 w-full !important;
 }
 
 /* Headers */
 .pg-theme-tailwind-th {
-    @apply bg-slate-50 border-b border-slate-200/80 text-[11px] font-bold tracking-wider text-slate-500 uppercase px-6 py-4 !important;
-    font-family: 'Red Hat Display', sans-serif;
+    @apply bg-slate-50/50 border-b border-slate-100 text-xs font-medium tracking-wide text-slate-500 px-4 py-3.5 !important;
 }
 
 /* Header interactive state */
 .pg-theme-tailwind-th button {
-    @apply font-bold text-slate-500 uppercase hover:text-slate-700 !important;
+    @apply font-medium text-slate-500 hover:text-slate-900 transition-colors !important;
 }
 
 /* Table rows & cells */
 .pg-theme-tailwind-tr {
-    @apply border-b border-slate-100 hover:bg-blue-50/20 transition-all duration-150 !important;
+    @apply border-b border-slate-100 hover:bg-slate-50/60 transition-colors duration-200 !important;
 }
 
 .pg-theme-tailwind-td {
-    @apply px-6 py-4 text-sm text-slate-600 font-normal align-middle !important;
+    @apply px-4 py-3.5 text-sm text-slate-700 font-normal align-middle !important;
 }
 
 /* Inline filters row */
 .pg-theme-tailwind-filter-row {
-    @apply bg-slate-50/50 border-b border-slate-100 !important;
+    @apply bg-slate-50/30 border-b border-slate-100 !important;
 }
 
 .pg-theme-tailwind-filter-row select, 
 .pg-theme-tailwind-filter-row input {
-    @apply rounded-md border-slate-200 text-xs py-1.5 px-3 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-white !important;
+    @apply rounded-lg border-slate-200 text-xs py-1.5 px-3 focus:ring-1 focus:ring-slate-300 focus:border-slate-300 transition-all bg-white shadow-sm !important;
 }
 
 /* Customizing the Export and Filter buttons */
 .pg-theme-tailwind-btn-export, 
 .pg-theme-tailwind-btn-filter {
-    @apply inline-flex items-center gap-2 border border-slate-200 bg-white text-slate-700 rounded-md px-3.5 py-2 text-xs font-semibold shadow-sm hover:bg-slate-50 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all !important;
+    @apply inline-flex items-center gap-2 border border-slate-200 bg-white text-slate-600 rounded-lg px-3.5 py-2 text-xs font-medium shadow-sm hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-300 transition-all !important;
 }
 
 /* Pagination container */
 .pg-theme-tailwind-pagination-container {
-    @apply border-t border-slate-100 bg-white py-4 px-6 flex items-center justify-between !important;
+    @apply border-t border-slate-100 bg-white py-4 px-4 flex items-center justify-between !important;
 }
 
 .pg-theme-tailwind-pagination-container select {
-    @apply rounded-md border-slate-200 text-xs py-1.5 focus:ring-2 focus:ring-primary/20 focus:border-primary !important;
+    @apply rounded-lg border-slate-200 text-xs py-1.5 focus:ring-1 focus:ring-slate-300 focus:border-slate-300 !important;
 }
 
 .pg-theme-tailwind-pagination-container button {
-    @apply inline-flex items-center justify-center border border-slate-200 bg-white text-slate-600 rounded-md px-3 py-1.5 text-xs font-medium hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all !important;
+    @apply inline-flex items-center justify-center border border-slate-200 bg-white text-slate-600 rounded-lg px-3 py-1.5 text-xs font-medium hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-300 transition-all shadow-sm !important;
 }
 
 /* PowerGrid header custom filter styling to ensure uniform widths and sleek design */
@@ -188,3 +236,133 @@
     min-width: 100% !important;
 }
 
+/* ==========================================
+   Premium Global Buttons Redesign
+   ========================================== */
+
+/* Primary Button Component */
+.bg-primary {
+    background: linear-gradient(135deg, rgb(37, 99, 235) 0%, rgb(79, 70, 229) 100%) !important;
+    color: #ffffff !important;
+    border-radius: 0.5rem !important; /* rounded-lg */
+    font-weight: 600 !important;
+    letter-spacing: 0.025em !important;
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.15) !important;
+    border: none !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.bg-primary:hover {
+    background: linear-gradient(135deg, rgb(29, 78, 216) 0%, rgb(67, 56, 202) 100%) !important;
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.25) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Secondary Button Component */
+.border-input.bg-background {
+    background-color: #ffffff !important;
+    border: 1px solid rgba(226, 232, 240, 0.8) !important;
+    color: rgb(71, 85, 105) !important;
+    border-radius: 0.5rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.border-input.bg-background:hover {
+    background-color: rgb(248, 250, 252) !important;
+    border-color: rgb(203, 213, 225) !important;
+    color: rgb(15, 23, 42) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Danger Button Component */
+.bg-red-600 {
+    background: linear-gradient(135deg, rgb(220, 38, 38) 0%, rgb(185, 28, 28) 100%) !important;
+    color: #ffffff !important;
+    border-radius: 0.5rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 10px rgba(220, 38, 38, 0.15) !important;
+    border: none !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.bg-red-600:hover {
+    background: linear-gradient(135deg, rgb(185, 28, 28) 0%, rgb(153, 27, 27) 100%) !important;
+    box-shadow: 0 6px 16px rgba(220, 38, 38, 0.25) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* ==========================================
+   Premium Table Action Buttons Redesign
+   ========================================== */
+
+/* Universal Default Action Button Style (Neutral Slate - No Warna-Warni) */
+td button.bg-blue-500, td a.bg-blue-500, td button[class*="bg-blue-"], td a[class*="bg-blue-"],
+td button.bg-amber-500, td a.bg-amber-500, td button[class*="bg-amber-"], td a[class*="bg-amber-"],
+td button.bg-yellow-500, td a.bg-yellow-500, td button[class*="bg-yellow-"], td a[class*="bg-yellow-"],
+td button.bg-red-500, td a.bg-red-500, td button[class*="bg-red-"], td a[class*="bg-red-"],
+td button.bg-indigo-500, td a.bg-indigo-500, td button[class*="bg-indigo-"], td a[class*="bg-indigo-"] {
+    background-color: rgba(241, 245, 249, 0.8) !important;
+    color: rgb(100, 116, 139) !important; /* text-slate-500 */
+    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+    border-radius: 0.5rem !important; /* rounded-lg */
+    padding: 0.55rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transform: translateZ(0);
+}
+
+/* Hover - View Button (Blue) */
+td button.bg-blue-500:hover, td a.bg-blue-500:hover, 
+td button[class*="bg-blue-"]:hover, td a[class*="bg-blue-"]:hover {
+    background-color: rgb(37, 99, 235) !important;
+    color: #ffffff !important;
+    border-color: rgb(37, 99, 235) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
+    transform: translateY(-1.5px) !important;
+}
+
+/* Hover - Edit Button (Amber) */
+td button.bg-amber-500:hover, td a.bg-amber-500:hover, 
+td button[class*="bg-amber-"]:hover, td a[class*="bg-amber-"]:hover,
+td button[class*="bg-yellow-"]:hover, td a[class*="bg-yellow-"]:hover {
+    background-color: rgb(217, 119, 6) !important;
+    color: #ffffff !important;
+    border-color: rgb(217, 119, 6) !important;
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25) !important;
+    transform: translateY(-1.5px) !important;
+}
+
+/* Hover - Print/Sync Button (Indigo) */
+td button.bg-indigo-500:hover, td a.bg-indigo-500:hover, 
+td button[class*="bg-indigo-"]:hover, td a[class*="bg-indigo-"]:hover {
+    background-color: rgb(79, 70, 229) !important;
+    color: #ffffff !important;
+    border-color: rgb(79, 70, 229) !important;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25) !important;
+    transform: translateY(-1.5px) !important;
+}
+
+/* Hover - Delete Button (Red) */
+td button.bg-red-500:hover, td a.bg-red-500:hover, 
+td button[class*="bg-red-"]:hover, td a[class*="bg-red-"]:hover {
+    background-color: rgb(220, 38, 38) !important;
+    color: #ffffff !important;
+    border-color: rgb(220, 38, 38) !important;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25) !important;
+    transform: translateY(-1.5px) !important;
+}
+
+/* Hide default input number spinners globally */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+}
+input[type="number"] {
+    -moz-appearance: textfield !important;
+}

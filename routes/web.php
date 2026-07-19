@@ -5,6 +5,10 @@ use App\Http\Controllers\SalesController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FinanceReportController;
+use App\Http\Controllers\PaymentWebhookController;
+
+Route::post('/api/v1/callback/pakasir', [PaymentWebhookController::class, 'handlePakasir'])
+    ->name('payments.webhook.pakasir');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // =========================================================================
@@ -45,6 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('sales', SalesController::class)->except(['edit', 'update']);
     Route::prefix('sales/{sale}')->name('sales.')->controller(SalesController::class)->group(function () {
         Route::get('print', 'print')->name('print');
+        Route::get('status', 'checkStatus')->name('status');
         Route::patch('complete', 'complete')->name('complete');
         Route::patch('restore', 'restore')->name('restore');
     });

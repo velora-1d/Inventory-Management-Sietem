@@ -10,6 +10,10 @@ use App\Exceptions\SaleException;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreSaleRequest;
 
+use App\Enums\PaymentMethod;
+use App\Enums\SaleStatus;
+use App\Services\PakasirService;
+
 class SalesController extends Controller
 {
     public function index()
@@ -34,18 +38,40 @@ class SalesController extends Controller
             $validated = $request->validated();
             $validated['created_by'] = Auth::id();
 
+            // Force status to PENDING for gateway payments (QRIS)
+            if ($validated['payment_method'] === PaymentMethod::QRIS->value) {
+                $validated['status'] = SaleStatus::PENDING->value;
+            }
+
             $saleData = SaleData::fromArray($validated);
 
             $sale = $saleService->createSale($saleData);
+
+            // Generate Pakasir checkout URL if it's a gateway payment (QRIS)
+            $checkoutUrl = null;
+            if ($sale->payment_method === PaymentMethod::QRIS) {
+                $pakasirService = app(PakasirService::class);
+                $checkoutUrl = $pakasirService->buildGatewayCheckoutUrl(
+                    $sale->invoice_number,
+                    (int) $sale->total,
+                    route('sales.show', $sale->id),
+                    $sale->payment_method->value
+                );
+            }
 
             if ($request->wantsJson()) {
                 return response()->json([
                     'success' => true,
                     'message' => 'Sale created successfully',
                     'data' => $sale,
+                    'checkout_url' => $checkoutUrl,
                     'print_url' => route('sales.print', $sale->id),
-                    'redirect' => route('sales.create')
+                    'redirect' => $checkoutUrl ?: route('sales.create')
                 ], 201);
+            }
+
+            if ($checkoutUrl) {
+                return redirect()->away($checkoutUrl);
             }
 
             return redirect()->route('sales.create')
@@ -86,6 +112,14 @@ class SalesController extends Controller
     {
         $sale->load(['items.product.unit', 'customer', 'creator']);
         return view('sales.print', compact('sale'));
+    }
+
+    public function checkStatus(Sale $sale)
+    {
+        return response()->json([
+            'status' => $sale->status->value,
+            'print_url' => route('sales.print', $sale->id),
+        ]);
     }
 
     public function restore(Sale $sale, SaleService $saleService)
