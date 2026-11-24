@@ -20,8 +20,11 @@ class ProductController extends Controller
                 ->with(['unit'])
                 ->where('quantity', '>', 0) // Only show available products
                 ->when($query, function ($q) use ($query) {
-                    $q->where('name', 'like', "%{$query}%")
-                        ->orWhere('sku', 'like', "%{$query}%");
+                    $q->where(function ($sub) use ($query) {
+                        $sub->whereLike('name', "%{$query}%", caseSensitive: false)
+                            ->orWhereLike('sku', "%{$query}%", caseSensitive: false)
+                            ->orWhereLike('barcode', "%{$query}%", caseSensitive: false);
+                    });
                 })
                 ->limit(50)
                 ->get()
@@ -34,6 +37,7 @@ class ProductController extends Controller
                         'price' => $product->purchase_price,
                         'selling_price' => $product->selling_price,
                         'sku' => $product->sku,
+                        'barcode' => $product->barcode,
                         'quantity' => $product->quantity,
                         'unit' => $product->unit ? [
                             'symbol' => $product->unit->symbol,

@@ -15,6 +15,7 @@ class Product extends Model
         'category_id',
         'unit_id',
         'sku',
+        'barcode',
         'name',
         'image',
         'purchase_price',
@@ -52,5 +53,25 @@ class Product extends Model
     public function saleItems()
     {
         return $this->hasMany(SaleItem::class);
+    }
+
+    public function stockBalances()
+    {
+        return $this->hasMany(StockBalance::class);
+    }
+
+    public function stockMovements()
+    {
+        return $this->hasMany(StockMovement::class);
+    }
+
+    public function availableStock(): int
+    {
+        $balances = $this->stockBalances()->get();
+        if ($balances->isEmpty()) {
+            return max(0, (int) $this->quantity);
+        }
+
+        return (int) $balances->sum(fn (StockBalance $b) => $b->available);
     }
 }

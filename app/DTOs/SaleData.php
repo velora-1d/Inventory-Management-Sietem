@@ -22,6 +22,7 @@ readonly class SaleData
         public int $cash_received = 0,
         public int $change = 0,
         public int $global_discount = 0,
+        public array $split_payments = [],
     ) {}
 
     public static function fromArray(array $data): self
@@ -37,6 +38,7 @@ readonly class SaleData
             cash_received: (int) ($data['cash_received'] ?? 0),
             change: (int) ($data['change'] ?? 0),
             global_discount: (int) ($data['global_discount'] ?? 0),
+            split_payments: is_array($data['split_payments'] ?? null) ? $data['split_payments'] : [],
         );
     }
 
@@ -53,6 +55,7 @@ readonly class SaleData
             'cash_received' => $this->cash_received,
             'change' => $this->change,
             'global_discount' => $this->global_discount,
+            'split_payments' => $this->split_payments,
         ];
     }
 }

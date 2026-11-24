@@ -28,6 +28,7 @@ class StoreSaleRequest extends FormRequest
             'customer_id' => ['nullable', 'exists:customers,id'],
             'sale_date' => ['required', 'date'],
             'payment_method' => ['required', Rule::enum(PaymentMethod::class)],
+            'payment_gateway' => ['nullable', 'string', 'max:50'],
             'status' => ['nullable', Rule::enum(SaleStatus::class)],
             'notes' => ['nullable', 'string'],
             'cash_received' => ['nullable', 'numeric', 'min:0'],
@@ -39,6 +40,11 @@ class StoreSaleRequest extends FormRequest
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0'],
             'items.*.discount' => ['nullable', 'numeric', 'min:0'],
+
+            'split_payments' => ['nullable', 'array'],
+            'split_payments.*.payment_method' => ['required_with:split_payments', Rule::enum(PaymentMethod::class)],
+            'split_payments.*.amount' => ['required_with:split_payments', 'numeric', 'min:0.01'],
+            'split_payments.*.reference' => ['nullable', 'string', 'max:100'],
         ];
     }
 

@@ -52,6 +52,13 @@
                             <x-heroicon-o-credit-card class="w-4 h-4 text-gray-400" />
                         </x-detail-item>
 
+                        <!-- Payment Gateway -->
+                        @if($sale->payment_gateway)
+                        <x-detail-item label="Payment Gateway" :value="strtoupper($sale->payment_gateway) . ($sale->payment_reference ? ' (' . $sale->payment_reference . ')' : '')">
+                            <x-heroicon-o-globe-alt class="w-4 h-4 text-gray-400" />
+                        </x-detail-item>
+                        @endif
+
                         <!-- Status -->
                         <div>
                             <label class="text-sm font-medium leading-none text-gray-500">Status</label>
@@ -191,6 +198,17 @@
             }" class="flex flex-col sm:flex-row justify-end gap-4">
 
                 @if($sale->status === \App\Enums\SaleStatus::PENDING)
+                    @if($sale->payment_checkout_url)
+                        <a
+                            href="{{ $sale->payment_checkout_url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center justify-center rounded-md bg-sky-600 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                        >
+                            {{ __('Buka Link Pembayaran') }}
+                        </a>
+                    @endif
+
                     {{-- Complete / Pay Action --}}
                     <x-primary-button
                         class="!bg-green-600 hover:!bg-green-700 focus:!ring-green-500"

@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sale;
 use App\DTOs\SaleData;
-use Illuminate\Http\Request;
-use App\Services\SaleService;
-use App\Exceptions\SaleException;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\StoreSaleRequest;
-
 use App\Enums\PaymentMethod;
 use App\Enums\SaleStatus;
-use App\Services\PakasirService;
+use App\Exceptions\SaleException;
+use App\Http\Requests\StoreSaleRequest;
+use App\Models\Sale;
+use App\Payments\PaymentGatewayManager;
+use App\Services\SaleService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class SalesController extends Controller
 {
@@ -21,52 +21,90 @@ class SalesController extends Controller
         return view('sales.index');
     }
 
-    public function create()
+    public function create(PaymentGatewayManager $paymentManager)
     {
         $categories = \App\Models\Category::orderBy('name')->get();
         $products = \App\Models\Product::with(['unit', 'category'])
             ->where('is_active', true)
             ->orderBy('name')
             ->get();
-            
-        return view('sales.create', compact('categories', 'products'));
+
+        $activeDriver = $paymentManager->activeDriver();
+        $activeGatewayKey = $activeDriver->key();
+        $activeGatewayLabel = $activeDriver->label();
+        $gatewayMethods = $activeGatewayKey === 'manual'
+            ? []
+            : array_values(array_intersect(
+                $paymentManager->gatewayHandledMethods(),
+                $activeDriver->supportedMethods()
+            ));
+        $availableGateways = $paymentManager->availableGateways();
+        $paymentMethods = array_map(fn (PaymentMethod $method) => [
+            'value' => $method->value,
+            'label' => $method->label(),
+        ], PaymentMethod::cases());
+
+        return view('sales.create', compact(
+            'categories',
+            'products',
+            'activeGatewayKey',
+            'activeGatewayLabel',
+            'gatewayMethods',
+            'availableGateways',
+            'paymentMethods',
+        ));
     }
 
-    public function store(StoreSaleRequest $request, SaleService $saleService)
+    public function store(StoreSaleRequest $request, SaleService $saleService, PaymentGatewayManager $paymentManager)
     {
         try {
             $validated = $request->validated();
             $validated['created_by'] = Auth::id();
 
-            // Force status to PENDING for gateway payments (QRIS)
-            if ($validated['payment_method'] === PaymentMethod::QRIS->value) {
+            $paymentMethod = PaymentMethod::from($validated['payment_method']);
+            $requestedGateway = $validated['payment_gateway'] ?? null;
+            $useOnlineGateway = $paymentManager->shouldUseGateway($paymentMethod, $requestedGateway);
+
+            if ($useOnlineGateway) {
                 $validated['status'] = SaleStatus::PENDING->value;
             }
 
             $saleData = SaleData::fromArray($validated);
-
             $sale = $saleService->createSale($saleData);
 
-            // Generate Pakasir checkout URL if it's a gateway payment (QRIS)
             $checkoutUrl = null;
-            if ($sale->payment_method === PaymentMethod::QRIS) {
-                $pakasirService = app(PakasirService::class);
-                $checkoutUrl = $pakasirService->buildGatewayCheckoutUrl(
-                    $sale->invoice_number,
-                    (int) $sale->total,
+            if ($useOnlineGateway) {
+                $gateway = $paymentManager->driver($requestedGateway);
+                $checkoutResult = $gateway->createCheckout(
+                    $sale,
                     route('sales.show', $sale->id),
-                    $sale->payment_method->value
+                    ['method' => $sale->payment_method->value]
                 );
+
+                $checkoutUrl = $checkoutResult->checkoutUrl;
+
+                $sale->update([
+                    'payment_gateway' => $checkoutResult->gateway,
+                    'payment_reference' => $checkoutResult->reference,
+                    'payment_checkout_url' => $checkoutUrl,
+                    'payment_meta' => $checkoutResult->meta,
+                ]);
+            } else {
+                $sale->update([
+                    'payment_gateway' => 'manual',
+                    'payment_reference' => $sale->invoice_number,
+                ]);
             }
 
             if ($request->wantsJson()) {
                 return response()->json([
                     'success' => true,
                     'message' => 'Sale created successfully',
-                    'data' => $sale,
+                    'data' => $sale->fresh(),
                     'checkout_url' => $checkoutUrl,
+                    'payment_gateway' => $sale->payment_gateway,
                     'print_url' => route('sales.print', $sale->id),
-                    'redirect' => $checkoutUrl ?: route('sales.create')
+                    'redirect' => $checkoutUrl ?: route('sales.create'),
                 ], 201);
             }
 
@@ -97,9 +135,21 @@ class SalesController extends Controller
         return view('sales.show', compact('sale'));
     }
 
-    public function destroy(Request $request, Sale $sale, SaleService $saleService)
+    public function destroy(Request $request, Sale $sale, SaleService $saleService, PaymentGatewayManager $paymentManager)
     {
         try {
+            if ($sale->status === SaleStatus::PENDING && $sale->payment_gateway && $sale->payment_gateway !== 'manual') {
+                try {
+                    $paymentManager->driver($sale->payment_gateway)->cancelTransaction($sale);
+                } catch (\Throwable $gatewayException) {
+                    Log::warning('Remote payment cancellation failed while cancelling local sale', [
+                        'sale_id' => $sale->id,
+                        'gateway' => $sale->payment_gateway,
+                        'error' => $gatewayException->getMessage(),
+                    ]);
+                }
+            }
+
             $reason = $request->input('reason');
             $saleService->cancelSale($sale, $reason);
             return redirect()->route('sales.index')->with('success', 'Sale cancelled successfully.');
@@ -114,10 +164,35 @@ class SalesController extends Controller
         return view('sales.print', compact('sale'));
     }
 
-    public function checkStatus(Sale $sale)
+    public function checkStatus(Request $request, Sale $sale, PaymentGatewayManager $paymentManager)
     {
+        if (
+            $request->boolean('sync')
+            && $sale->status === SaleStatus::PENDING
+            && $sale->payment_gateway
+            && $sale->payment_gateway !== 'manual'
+        ) {
+            try {
+                $statusResult = $paymentManager->driver($sale->payment_gateway)->getTransactionStatus($sale);
+                if ($statusResult->status === 'paid') {
+                    app(SaleService::class)->completeSale($sale, [
+                        'cash_received' => $sale->total,
+                        'change' => 0,
+                    ]);
+                    $sale->refresh();
+                }
+            } catch (\Throwable $e) {
+                Log::warning('Payment status sync failed', [
+                    'sale_id' => $sale->id,
+                    'gateway' => $sale->payment_gateway,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
         return response()->json([
             'status' => $sale->status->value,
+            'payment_gateway' => $sale->payment_gateway,
             'print_url' => route('sales.print', $sale->id),
         ]);
     }

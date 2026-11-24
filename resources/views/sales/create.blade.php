@@ -173,30 +173,24 @@
 
                     <!-- Payment Inputs -->
                     <div class="space-y-3 pt-3 border-t border-gray-150">
-                        <div class="flex items-center gap-3">
-                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider shrink-0 w-24">Pay Method</span>
-                            <div class="grid grid-cols-4 gap-2 flex-1">
-                                <button
-                                    @click="payment.method = 'cash'; saleStatus = 'completed';"
-                                    class="px-2 py-1.5 text-xs font-bold rounded-lg border transition-all"
-                                    :class="payment.method === 'cash' ? 'bg-sky-600 text-white border-sky-600 shadow-sm' : 'bg-white text-gray-700 border-gray-350 hover:bg-gray-50'"
-                                >
-                                    CASH
-                                </button>
-                                <button
-                                    @click="payment.method = 'transfer'; saleStatus = 'completed';"
-                                    class="px-2 py-1.5 text-xs font-bold rounded-lg border transition-all"
-                                    :class="payment.method === 'transfer' ? 'bg-sky-600 text-white border-sky-600 shadow-sm' : 'bg-white text-gray-700 border-gray-350 hover:bg-gray-50'"
-                                >
-                                    TRANSFER
-                                </button>
-                                <button
-                                    @click="payment.method = 'qris'; saleStatus = 'pending';"
-                                    class="px-2 py-1.5 text-xs font-bold rounded-lg border transition-all"
-                                    :class="payment.method === 'qris' ? 'bg-sky-600 text-white border-sky-600 shadow-sm' : 'bg-white text-gray-700 border-gray-350 hover:bg-gray-50'"
-                                >
-                                    QRIS
-                                </button>
+                        <div class="flex items-start gap-3">
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider shrink-0 w-24 pt-1.5">Pay Method</span>
+                            <div class="flex-1 space-y-1.5">
+                                <div class="grid grid-cols-3 gap-2">
+                                    <template x-for="pm in paymentMethods" :key="pm.value">
+                                        <button
+                                            type="button"
+                                            @click="selectPaymentMethod(pm.value)"
+                                            class="px-2 py-1.5 text-xs font-bold rounded-lg border transition-all truncate"
+                                            :class="payment.method === pm.value ? 'bg-sky-600 text-white border-sky-600 shadow-sm' : 'bg-white text-gray-700 border-gray-350 hover:bg-gray-50'"
+                                            x-text="pm.label.toUpperCase()"
+                                        ></button>
+                                    </template>
+                                </div>
+                                <div class="flex items-center justify-between text-[10px] text-slate-500">
+                                    <span>Gateway: <strong class="text-sky-700" x-text="activeGatewayLabel"></strong></span>
+                                    <span x-show="isGatewayMethod(payment.method)" class="px-1.5 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-200 font-semibold">Auto Checkout</span>
+                                </div>
                             </div>
                         </div>
 
@@ -264,6 +258,31 @@
             <div class="w-full lg:w-[58%] flex flex-col h-full overflow-hidden">
                 <!-- Search & Filters Container (Fixed) -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-4 space-y-4">
+                    <!-- Barcode Scan & Shift Link Row -->
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <div class="relative flex-1">
+                            <input
+                                x-ref="barcodeInput"
+                                x-model="barcodeInput"
+                                @keydown.enter.prevent="scanBarcode()"
+                                type="text"
+                                placeholder="Scan Barcode / Ketik SKU lalu tekan Enter..."
+                                class="pl-3 pr-24 py-2 block w-full rounded-lg border-slate-300 focus:ring-blue-600 focus:border-blue-600 text-xs font-mono shadow-sm"
+                            >
+                            <button
+                                type="button"
+                                @click="scanBarcode()"
+                                class="absolute inset-y-1 right-1 px-2.5 rounded bg-[#142B4A] hover:bg-[#1e3a5f] text-white text-[11px] font-semibold"
+                            >
+                                Scan
+                            </button>
+                        </div>
+                        <a href="{{ route('pos.shifts.index') }}"
+                           class="inline-flex items-center justify-center px-3 py-2 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-xs font-semibold text-slate-700 whitespace-nowrap">
+                            Shift Kasir
+                        </a>
+                    </div>
+
                     <!-- Search Input -->
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -399,8 +418,8 @@
                             <!-- Modal Header -->
                             <div class="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-5 py-4">
                                 <div>
-                                    <h3 class="text-sm font-bold text-slate-900 tracking-wide">
-                                        PEMBAYARAN QRIS (VIA PAKASIR)
+                                    <h3 class="text-sm font-bold text-slate-900 tracking-wide" x-text="'PEMBAYARAN ONLINE (' + activeGatewayLabel.toUpperCase() + ')'">
+                                        PEMBAYARAN ONLINE
                                     </h3>
                                     <p class="text-[10px] text-slate-400 font-medium uppercase tracking-wider mt-0.5" x-text="'Invoice: ' + paymentInvoice"></p>
                                 </div>
@@ -418,7 +437,7 @@
                                 <!-- Spinner/Loading State for iframe -->
                                 <div class="absolute inset-0 flex flex-col items-center justify-center bg-white z-0" x-show="!paymentUrl">
                                     <svg class="animate-spin h-8 w-8 text-sky-600 mb-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                    <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Memuat Barcode QRIS...</span>
+                                    <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Memuat Halaman Pembayaran...</span>
                                 </div>
                                 
                                 <!-- IFrame -->
@@ -460,7 +479,12 @@
                     // Products & Categories loaded from controller
                     products: @json($products),
                     categories: @json($categories),
+                    paymentMethods: @json($paymentMethods),
+                    activeGatewayKey: @json($activeGatewayKey),
+                    activeGatewayLabel: @json($activeGatewayLabel),
+                    gatewayMethods: @json($gatewayMethods),
                     searchQuery: '',
+                    barcodeInput: '',
                     selectedCategoryId: null,
 
                     cart: [],
@@ -505,13 +529,23 @@
                         this.initCustomerSelect();
                     },
 
+                    isGatewayMethod(method) {
+                        return this.activeGatewayKey !== 'manual' && this.gatewayMethods.includes(method);
+                    },
+
+                    selectPaymentMethod(method) {
+                        this.payment.method = method;
+                        this.saleStatus = this.isGatewayMethod(method) ? 'pending' : 'completed';
+                    },
+
                     // Computed product filter
                     get filteredProducts() {
                         let query = this.searchQuery.toLowerCase().trim();
                         return this.products.filter(product => {
                             let matchesQuery = !query || 
                                 product.name.toLowerCase().includes(query) || 
-                                (product.sku && product.sku.toLowerCase().includes(query));
+                                (product.sku && product.sku.toLowerCase().includes(query)) ||
+                                (product.barcode && product.barcode.toLowerCase().includes(query));
                             
                             let matchesCategory = this.selectedCategoryId === null || 
                                 product.category_id == this.selectedCategoryId;
@@ -592,6 +626,30 @@
                         localStorage.removeItem('pos_customer');
                         localStorage.removeItem('pos_payment');
                         localStorage.removeItem('pos_globalDiscount');
+                    },
+
+                    async scanBarcode() {
+                        const code = (this.barcodeInput || '').trim();
+                        if (!code) return;
+
+                        try {
+                            const res = await fetch(`{{ url('/ajax/products/barcode') }}/${encodeURIComponent(code)}`, {
+                                headers: { 'Accept': 'application/json' }
+                            });
+                            if (!res.ok) {
+                                this.$dispatch('toast', { message: 'Barcode / SKU tidak ditemukan.', type: 'error' });
+                                return;
+                            }
+                            const matched = await res.json();
+                            const localProduct = this.products.find(p => p.id === matched.id) || {
+                                ...matched,
+                                quantity: matched.available,
+                            };
+                            this.addToCart(localProduct);
+                            this.barcodeInput = '';
+                        } catch (e) {
+                            this.$dispatch('toast', { message: 'Gagal memindai barcode.', type: 'error' });
+                        }
                     },
 
                     // Cart Management
@@ -838,7 +896,7 @@
                                     // Open print layout in a new window
                                     window.open(statusData.print_url, '_blank');
 
-                                    this.$dispatch('toast', { message: 'Pembayaran QRIS Berhasil!', type: 'success' });
+                                    this.$dispatch('toast', { message: 'Pembayaran Berhasil!', type: 'success' });
                                 }
                             } catch (error) {
                                 console.error('Error polling payment status:', error);

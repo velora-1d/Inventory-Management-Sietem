@@ -14,8 +14,10 @@ use App\Exceptions\PurchaseException;
 class PurchaseService
 {
     public function __construct(
-        protected FinanceTransactionService $financeService
+        protected FinanceTransactionService $financeService,
+        protected ?InventoryLedgerService $inventoryLedger = null
     ) {
+        $this->inventoryLedger ??= app(InventoryLedgerService::class);
     }
 
     public function createPurchase(PurchaseData $data, int $userId): Purchase
@@ -136,7 +138,15 @@ class PurchaseService
                 $product = Product::where('id', $item->product_id)->lockForUpdate()->first();
 
                 if ($product) {
-                    $product->increment('quantity', $item->quantity);
+                    $this->inventoryLedger->stockIn(
+                        productId: $product->id,
+                        qty: (int) $item->quantity,
+                        referenceType: 'purchase',
+                        referenceId: $purchase->id,
+                        reason: "Purchase received #{$purchase->invoice_number}",
+                        actorId: $purchase->created_by
+                    );
+                    $product->refresh();
 
                     // Update latest purchase price and selling price
                     $updateData = ['purchase_price' => $item->unit_price];

@@ -26,6 +26,10 @@ class Sale extends Model
         'cash_received',
         'change',
         'payment_method',
+        'payment_gateway',
+        'payment_reference',
+        'payment_checkout_url',
+        'payment_meta',
         'notes',
     ];
 
@@ -33,6 +37,7 @@ class Sale extends Model
         'sale_date' => 'datetime',
         'status' => SaleStatus::class,
         'payment_method' => PaymentMethod::class,
+        'payment_meta' => 'array',
         'subtotal' => 'integer',
         'global_discount' => 'integer',
         'total_discount' => 'integer',
@@ -54,5 +59,10 @@ class Sale extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(SalePayment::class);
     }
 }

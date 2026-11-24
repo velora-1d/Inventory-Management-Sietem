@@ -6,6 +6,7 @@ use Exception;
 use App\Models\Sale;
 use App\DTOs\SaleData;
 use App\Models\Product;
+use App\Models\SalePayment;
 use App\Enums\SaleStatus;
 use App\Enums\PaymentMethod;
 use App\Exceptions\SaleException;
@@ -14,8 +15,10 @@ use Illuminate\Support\Facades\DB;
 class SaleService
 {
     public function __construct(
-        protected FinanceTransactionService $financeService
+        protected FinanceTransactionService $financeService,
+        protected ?InventoryLedgerService $inventoryLedger = null
     ) {
+        $this->inventoryLedger ??= app(InventoryLedgerService::class);
     }
 
     /**
@@ -61,17 +64,25 @@ class SaleService
                         throw SaleException::productNotFound($itemData->product_id);
                     }
 
-                    if ($product->quantity < $itemData->quantity) {
+                    $available = $this->inventoryLedger->availableStock($product->id);
+
+                    if ($available < $itemData->quantity) {
                         throw SaleException::insufficientStock(
                             $product->name,
                             $itemData->quantity,
-                            $product->quantity
+                            $available
                         );
                     }
 
-                    // Update stock
-                    $product->quantity -= $itemData->quantity;
-                    $product->save();
+                    // Deduct stock atomically via InventoryLedgerService
+                    $this->inventoryLedger->stockOut(
+                        productId: $product->id,
+                        qty: (int) $itemData->quantity,
+                        referenceType: 'sale',
+                        referenceId: $sale->id,
+                        reason: "POS Sale #{$sale->invoice_number}",
+                        actorId: $data->created_by
+                    );
 
                     $unitPrice = $product->selling_price;
                     $quantity = $itemData->quantity;
@@ -112,7 +123,7 @@ class SaleService
 
                 $total = $totalSubtotal - $data->global_discount;
 
-                if ($data->status === SaleStatus::COMPLETED) {
+                if ($data->status === SaleStatus::COMPLETED && empty($data->split_payments)) {
                     if ($data->payment_method === \App\Enums\PaymentMethod::CASH && $data->cash_received < $total) {
                         throw SaleException::insufficientPayment($total, $data->cash_received);
                     }
@@ -120,7 +131,7 @@ class SaleService
                 $change = 0;
 
                 // Calculate change if payment method is cash
-                if ($data->payment_method === \App\Enums\PaymentMethod::CASH && $data->cash_received >= $total) {
+                if (empty($data->split_payments) && $data->payment_method === \App\Enums\PaymentMethod::CASH && $data->cash_received >= $total) {
                     $change = $data->cash_received - $total;
                 }
 
@@ -131,6 +142,33 @@ class SaleService
                     'total' => $total,
                     'change' => $change,
                 ]);
+
+                if (!empty($data->split_payments)) {
+                    $splitTotal = 0;
+                    foreach ($data->split_payments as $sp) {
+                        $amount = (float) ($sp['amount'] ?? 0);
+                        $splitTotal += $amount;
+                        SalePayment::create([
+                            'sale_id' => $sale->id,
+                            'payment_method' => $sp['payment_method'] ?? $data->payment_method->value,
+                            'amount' => $amount,
+                            'reference' => $sp['reference'] ?? null,
+                            'paid_at' => $sale->status === SaleStatus::COMPLETED ? now() : null,
+                        ]);
+                    }
+
+                    if ($sale->status === SaleStatus::COMPLETED && $splitTotal < $total) {
+                        throw SaleException::insufficientPayment($total, (int) $splitTotal);
+                    }
+                } elseif ($sale->status === SaleStatus::COMPLETED) {
+                    SalePayment::create([
+                        'sale_id' => $sale->id,
+                        'payment_method' => $data->payment_method->value,
+                        'amount' => $total,
+                        'reference' => $sale->invoice_number,
+                        'paid_at' => now(),
+                    ]);
+                }
 
                 if ($sale->status === SaleStatus::COMPLETED) {
                     $this->financeService->recordIncomeFromSale($sale);
@@ -163,7 +201,14 @@ class SaleService
 
                     foreach ($sale->items as $item) {
                         if ($item->product) {
-                            $item->product->increment('quantity', $item->quantity);
+                            $this->inventoryLedger->returnIn(
+                                productId: $item->product->id,
+                                qty: (int) $item->quantity,
+                                referenceType: 'sale',
+                                referenceId: $sale->id,
+                                reason: "Sale cancelled #{$sale->invoice_number}",
+                                actorId: $sale->created_by
+                            );
                         }
                     }
                 }
@@ -218,6 +263,16 @@ class SaleService
 
             $sale->update($updateData);
 
+            if ($sale->payments()->count() === 0) {
+                SalePayment::create([
+                    'sale_id' => $sale->id,
+                    'payment_method' => $sale->payment_method->value,
+                    'amount' => $sale->total,
+                    'reference' => $sale->payment_reference ?? $sale->invoice_number,
+                    'paid_at' => now(),
+                ]);
+            }
+
             // Sync Finance
             $this->financeService->recordIncomeFromSale($sale);
 
@@ -245,15 +300,24 @@ class SaleService
                     throw SaleException::productNotFound($item->product_id);
                 }
 
-                if ($product->quantity < $item->quantity) {
+                $available = $this->inventoryLedger->availableStock($product->id);
+
+                if ($available < $item->quantity) {
                     throw SaleException::insufficientStock(
                         $product->name,
                         $item->quantity,
-                        $product->quantity
+                        $available
                     );
                 }
 
-                $product->decrement('quantity', $item->quantity);
+                $this->inventoryLedger->stockOut(
+                    productId: $product->id,
+                    qty: (int) $item->quantity,
+                    referenceType: 'sale',
+                    referenceId: $sale->id,
+                    reason: "Sale restored #{$sale->invoice_number}",
+                    actorId: $sale->created_by
+                );
             }
 
             // Restore to PENDING
