@@ -34,6 +34,9 @@ class SettingSeeder extends Seeder
             // Flexible Payment Gateway Configuration
             'payment_gateway' => 'manual',
             'payment_gateway_methods' => 'qris,ewallet,virtual_account',
+            'payment_bank_name' => '',
+            'payment_bank_account_number' => '',
+            'payment_bank_account_holder' => '',
             'payment_pakasir_base_url' => 'https://app.pakasir.com',
             'payment_pakasir_slug' => '',
             'payment_pakasir_api_key' => '',

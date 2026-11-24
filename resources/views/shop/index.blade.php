@@ -4,6 +4,13 @@
     $myOrdersUrl = \Illuminate\Support\Facades\Route::has('my-orders.index') ? route('my-orders.index') : url('/my-orders');
     $registerUrl = \Illuminate\Support\Facades\Route::has('shop.register') ? route('shop.register') : url('/shop/register');
     $loginUrl = \Illuminate\Support\Facades\Route::has('login') ? route('login') : url('/login');
+    $waCartLines = [];
+    foreach ($cartItems ?? [] as $ci) {
+        $waCartLines[] = "- {$ci['product']->name} x {$ci['quantity']} (" . format_money($ci['subtotal']) . ")";
+    }
+    $waOrderUrl = !empty($waCartLines)
+        ? brand_whatsapp_url("Halo Admin " . brand_name() . ", saya ingin pesan (dibantu order via POS):\n" . implode("\n", $waCartLines) . "\nTotal: " . format_money($cartSubtotal ?? 0))
+        : brand_whatsapp_url("Halo Admin " . brand_name() . ", saya ingin konsultasi/pesan produk.");
 @endphp
 
 <x-guest-layout title="Katalog Belanja">
@@ -273,6 +280,13 @@
                                    class="block w-full rounded-xl bg-[#0F766E] px-4 py-2.5 text-center text-sm font-bold text-white hover:bg-[#0D655E] transition-colors">
                                     Lanjut ke Checkout
                                 </a>
+
+                                @if($waOrderUrl)
+                                    <a href="{{ $waOrderUrl }}" target="_blank" rel="noopener noreferrer"
+                                       class="block w-full rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-center text-xs font-bold text-[#0F766E] hover:bg-emerald-100 transition-colors">
+                                        Konfirmasi Admin via WA (Tanpa Payment)
+                                    </a>
+                                @endif
                             </div>
                         @endif
                     </div>

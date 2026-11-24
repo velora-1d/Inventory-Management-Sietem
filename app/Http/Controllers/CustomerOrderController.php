@@ -46,13 +46,9 @@ class CustomerOrderController extends Controller
             $order->load('trackingEvents');
         }
 
-        $rawPhone = preg_replace('/\D+/', '', brand_whatsapp_admin()) ?? '';
-        if (str_starts_with($rawPhone, '0')) {
-            $rawPhone = '62' . substr($rawPhone, 1);
-        }
-
-        $waMessage = urlencode("Halo Admin " . brand_name() . ", saya ingin konfirmasi pesanan #{$order->order_number} (Total: " . format_money($order->total) . ").");
-        $whatsappUrl = $rawPhone !== '' ? "https://wa.me/{$rawPhone}?text={$waMessage}" : null;
+        $whatsappUrl = brand_whatsapp_url(
+            "Halo Admin " . brand_name() . ", saya ingin konfirmasi pesanan #{$order->order_number} (Total: " . format_money($order->total) . ")."
+        );
 
         $trackingUrl = Route::has('tracking.show')
             ? route('tracking.show', $order->public_tracking_token)

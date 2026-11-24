@@ -142,9 +142,20 @@
                     @endif
 
                     @if($order->status !== 'cancelled' && $order->payment_status !== 'paid')
+                        @php($bankInfo = payment_bank_info())
                         <div class="rounded-2xl border border-[#DCE3EA] bg-white p-5 shadow-sm space-y-3">
-                            <h2 class="text-sm font-bold text-[#142B4A]">Unggah Bukti Pembayaran</h2>
-                            <p class="text-xs text-slate-500">Format: JPG, PNG, WEBP, atau PDF (maks. 4 MB).</p>
+                            <h2 class="text-sm font-bold text-[#142B4A]">Pembayaran &amp; Konfirmasi</h2>
+
+                            @if($bankInfo['account_number'] !== '')
+                                <div class="rounded-xl border border-blue-200 bg-blue-50/50 p-3 text-xs text-[#142B4A] space-y-0.5">
+                                    <p class="font-bold">Rekening Tujuan Transfer</p>
+                                    <p>Bank: <strong>{{ $bankInfo['bank_name'] ?: '-' }}</strong></p>
+                                    <p>No. Rekening: <strong class="font-mono text-sm">{{ $bankInfo['account_number'] }}</strong></p>
+                                    <p>Atas Nama: <strong>{{ $bankInfo['account_holder'] ?: brand_name() }}</strong></p>
+                                </div>
+                            @endif
+
+                            <p class="text-xs text-slate-500">Unggah bukti transfer (JPG, PNG, WEBP, atau PDF, maks. 4 MB) atau konfirmasi ke admin.</p>
 
                             @if($order->latestPayment?->proof_path)
                                 <div class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-[#2563EB]">
@@ -161,6 +172,13 @@
                                     Kirim Bukti Pembayaran
                                 </button>
                             </form>
+
+                            @if($whatsappUrl)
+                                <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer"
+                                   class="block w-full rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-center text-xs font-bold text-[#0F766E] hover:bg-emerald-100">
+                                    Konfirmasi Pembayaran via WA Admin
+                                </a>
+                            @endif
                         </div>
                     @endif
 

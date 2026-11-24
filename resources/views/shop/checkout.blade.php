@@ -2,10 +2,20 @@
     $shopUrl = \Illuminate\Support\Facades\Route::has('shop.index') ? route('shop.index') : url('/shop');
     $myOrdersUrl = \Illuminate\Support\Facades\Route::has('my-orders.index') ? route('my-orders.index') : url('/my-orders');
     $placeOrderUrl = \Illuminate\Support\Facades\Route::has('shop.place-order') ? route('shop.place-order') : url('/shop/checkout');
+    $bankInfo = payment_bank_info();
+    $waCartLines = [];
+    foreach ($cartItems ?? [] as $ci) {
+        $waCartLines[] = "- {$ci['product']->name} x {$ci['quantity']} (" . format_money($ci['subtotal']) . ")";
+    }
+    $waOrderUrl = brand_whatsapp_url(
+        "Halo Admin " . brand_name() . ", saya ingin pesan tanpa payment online (dibantu input via POS):\n"
+        . implode("\n", $waCartLines)
+        . "\nTotal: " . format_money($cartSubtotal ?? 0)
+    );
 @endphp
 
 <x-guest-layout title="Checkout Pesanan">
-    <div class="min-h-screen bg-[#F8FAFC] text-[#142B4A]" x-data="{ deliveryType: '{{ old('delivery_type', 'delivery') }}', selectedAddress: '{{ old('customer_address_id', $addresses->firstWhere('is_default', true)?->id ?? ($addresses->first()?->id ?? '')) }}' }">
+    <div class="min-h-screen bg-[#F8FAFC] text-[#142B4A]" x-data="{ deliveryType: '{{ old('delivery_type', 'delivery') }}', paymentMethod: '{{ old('payment_method', 'manual_transfer') }}', selectedAddress: '{{ old('customer_address_id', $addresses->firstWhere('is_default', true)?->id ?? ($addresses->first()?->id ?? '')) }}' }">
         <header class="border-b border-[#DCE3EA] bg-white">
             <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6 lg:px-8">
                 <a href="{{ $shopUrl }}" class="flex items-center gap-3">
@@ -143,20 +153,33 @@
                     <div class="rounded-2xl border border-[#DCE3EA] bg-white p-5 shadow-sm space-y-4">
                         <h2 class="text-base font-bold text-[#142B4A]">2. Metode Pembayaran</h2>
                         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                            <label class="flex cursor-pointer items-start gap-2.5 rounded-xl border border-[#DCE3EA] bg-[#F8FAFC] p-3">
-                                <input type="radio" name="payment_method" value="manual_transfer" @checked(old('payment_method', 'manual_transfer') === 'manual_transfer') class="mt-1 text-[#2563EB]" />
+                            <label class="flex cursor-pointer items-start gap-2.5 rounded-xl border p-3 transition-colors"
+                                   :class="paymentMethod === 'manual_transfer' ? 'border-[#2563EB] bg-blue-50/40' : 'border-[#DCE3EA] bg-[#F8FAFC]'">
+                                <input type="radio" name="payment_method" value="manual_transfer" x-model="paymentMethod" class="mt-1 text-[#2563EB]" />
                                 <div>
                                     <p class="text-sm font-bold text-[#142B4A]">Transfer Bank (Manual)</p>
-                                    <p class="text-xs text-slate-500">Unggah bukti transfer di halaman detail pesanan.</p>
+                                    <p class="text-xs text-slate-500">Transfer ke rekening toko lalu konfirmasi admin WA / unggah bukti.</p>
                                 </div>
                             </label>
-                            <label class="flex cursor-pointer items-start gap-2.5 rounded-xl border border-[#DCE3EA] bg-[#F8FAFC] p-3">
-                                <input type="radio" name="payment_method" value="qris" @checked(old('payment_method') === 'qris') class="mt-1 text-[#2563EB]" />
+                            <label class="flex cursor-pointer items-start gap-2.5 rounded-xl border p-3 transition-colors"
+                                   :class="paymentMethod === 'qris' ? 'border-[#2563EB] bg-blue-50/40' : 'border-[#DCE3EA] bg-[#F8FAFC]'">
+                                <input type="radio" name="payment_method" value="qris" x-model="paymentMethod" class="mt-1 text-[#2563EB]" />
                                 <div>
-                                    <p class="text-sm font-bold text-[#142B4A]">QRIS</p>
-                                    <p class="text-xs text-slate-500">Pembayaran QRIS via gateway / verifikasi manual.</p>
+                                    <p class="text-sm font-bold text-[#142B4A]">Bayar Langsung (QRIS / Gateway)</p>
+                                    <p class="text-xs text-slate-500">Pembayaran otomatis terverifikasi lewat payment gateway.</p>
                                 </div>
                             </label>
+                        </div>
+
+                        <div x-show="paymentMethod === 'manual_transfer'" class="rounded-xl border border-blue-200 bg-blue-50/50 p-3.5 text-xs text-[#142B4A] space-y-1">
+                            <p class="font-bold text-[#142B4A]">Rekening Tujuan Transfer</p>
+                            @if($bankInfo['account_number'] !== '')
+                                <p>Bank: <strong>{{ $bankInfo['bank_name'] ?: '-' }}</strong></p>
+                                <p>No. Rekening: <strong class="font-mono text-sm">{{ $bankInfo['account_number'] }}</strong></p>
+                                <p>Atas Nama: <strong>{{ $bankInfo['account_holder'] ?: brand_name() }}</strong></p>
+                            @else
+                                <p class="text-slate-600">Nomor rekening belum diatur di menu Pengaturan Admin. Silakan hubungi admin via WhatsApp setelah membuat pesanan.</p>
+                            @endif
                         </div>
 
                         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -216,6 +239,13 @@
                                 class="w-full rounded-xl bg-[#2563EB] px-4 py-3 text-sm font-bold text-white hover:bg-[#1D4ED8] transition-colors">
                             Buat Pesanan Sekarang
                         </button>
+
+                        @if($waOrderUrl)
+                            <a href="{{ $waOrderUrl }}" target="_blank" rel="noopener noreferrer"
+                               class="block w-full rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-center text-xs font-bold text-[#0F766E] hover:bg-emerald-100 transition-colors">
+                                Konfirmasi Admin via WA (Tanpa Payment)
+                            </a>
+                        @endif
                     </div>
                 </div>
             </form>

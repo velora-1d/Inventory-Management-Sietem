@@ -66,3 +66,35 @@ if (!function_exists('brand_whatsapp_admin')) {
         return (string) brand_setting('brand_whatsapp_admin', brand_setting('store_phone', '081234567890'));
     }
 }
+
+if (!function_exists('brand_whatsapp_url')) {
+    function brand_whatsapp_url(string $message = ''): ?string
+    {
+        $rawPhone = preg_replace('/\D+/', '', brand_whatsapp_admin()) ?? '';
+        if ($rawPhone === '') {
+            return null;
+        }
+
+        if (str_starts_with($rawPhone, '0')) {
+            $rawPhone = '62' . substr($rawPhone, 1);
+        }
+
+        return $message !== ''
+            ? "https://wa.me/{$rawPhone}?text=" . urlencode($message)
+            : "https://wa.me/{$rawPhone}";
+    }
+}
+
+if (!function_exists('payment_bank_info')) {
+    /**
+     * @return array{bank_name: string, account_number: string, account_holder: string}
+     */
+    function payment_bank_info(): array
+    {
+        return [
+            'bank_name' => trim((string) brand_setting('payment_bank_name', '')),
+            'account_number' => trim((string) brand_setting('payment_bank_account_number', '')),
+            'account_holder' => trim((string) brand_setting('payment_bank_account_holder', '')),
+        ];
+    }
+}
