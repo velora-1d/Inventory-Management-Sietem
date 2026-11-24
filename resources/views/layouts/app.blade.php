@@ -117,11 +117,11 @@
                                 </x-slot>
 
                                 <x-slot name="content">
-                                    <x-dropdown-link :href="route('profile.index')" :active="request()->routeIs('profile.*')">
+                                    <x-dropdown-link :href="route('profile.index')" wire:navigate :active="request()->routeIs('profile.*')">
                                         {{ __('Profile') }}
                                     </x-dropdown-link>
 
-                                    <x-dropdown-link :href="route('settings.index')" :active="request()->routeIs('settings.*')">
+                                    <x-dropdown-link :href="route('settings.index')" wire:navigate :active="request()->routeIs('settings.*')">
                                         {{ __('Settings') }}
                                     </x-dropdown-link>
 

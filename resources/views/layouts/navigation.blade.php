@@ -138,7 +138,7 @@
        :class="sidebarCollapsed ? 'w-20 sidebar-collapsed' : 'w-64'">
     {{-- Brand/Logo --}}
     <div class="sidebar-brand-header h-16 flex items-center justify-between px-4 border-b border-border bg-[#142B4A]">
-        <a href="{{ route('dashboard') }}" title="{{ brand_name() }}" class="flex items-center gap-2.5 min-w-0">
+        <a href="{{ route('dashboard') }}" wire:navigate title="{{ brand_name() }}" class="flex items-center gap-2.5 min-w-0">
             <x-application-logo class="shrink-0" style="width:30px;height:30px" />
             <div class="sidebar-brand-text min-w-0">
                 <span class="block text-sm font-bold tracking-tight text-white truncate">
@@ -166,7 +166,7 @@
         {{-- Dashboard Group --}}
         @can('dashboard.view')
         <a href="{{ route('dashboard') }}" title="Dashboard"
-           class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
             <svg class="nav-icon icon-dashboard" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="7" height="7" rx="1.5" />
                 <rect x="14" y="3" width="7" height="7" rx="1.5" />
@@ -183,7 +183,7 @@
         
         @can('pos.access')
         <a href="{{ route('sales.create') }}" title="POS (Kasir)"
-           class="sidebar-link {{ request()->routeIs('sales.create') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('sales.create') ? 'active' : '' }}">
             <svg class="nav-icon icon-pos" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <rect x="2" y="3" width="20" height="14" rx="2" />
                 <line x1="6" y1="21" x2="18" y2="21" />
@@ -196,7 +196,7 @@
         </a>
 
         <a href="{{ route('pos.shifts.index') }}" title="Shift Kasir"
-           class="sidebar-link {{ request()->routeIs('pos.shifts.*') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('pos.shifts.*') ? 'active' : '' }}">
             <svg class="nav-icon icon-pos" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="9" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 2" />
@@ -207,7 +207,7 @@
 
         @can('sales.view')
         <a href="{{ route('sales.index') }}" title="Daftar Penjualan"
-           class="sidebar-link {{ request()->routeIs(['sales.index','sales.show']) ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs(['sales.index','sales.show']) ? 'active' : '' }}">
             <svg class="nav-icon icon-sales" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z" />
             </svg>
@@ -217,7 +217,7 @@
 
         @can('purchases.view')
         <a href="{{ route('purchases.index') }}" title="Daftar Pembelian"
-           class="sidebar-link {{ request()->routeIs('purchases.*') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('purchases.*') ? 'active' : '' }}">
             <svg class="nav-icon icon-purchases" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
@@ -231,7 +231,7 @@
         <p class="sidebar-group-title">Kontak & Rekan</p>
 
         <a href="{{ route('customers.index') }}" title="Pelanggan (Customers)"
-           class="sidebar-link {{ request()->routeIs('customers.*') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('customers.*') ? 'active' : '' }}">
             <svg class="nav-icon icon-customers" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 0 0-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 0 1 5.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 0 1 9.288 0M15 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
             </svg>
@@ -239,7 +239,7 @@
         </a>
 
         <a href="{{ route('suppliers.index') }}" title="Pemasok (Suppliers)"
-           class="sidebar-link {{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
             <svg class="nav-icon icon-suppliers" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5" />
             </svg>
@@ -250,7 +250,7 @@
         <p class="sidebar-group-title">Katalog Produk</p>
 
         <a href="{{ route('products.index') }}" title="Produk Barang"
-           class="sidebar-link {{ request()->routeIs('products.*') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('products.*') ? 'active' : '' }}">
             <svg class="nav-icon icon-products" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
             </svg>
@@ -258,7 +258,7 @@
         </a>
 
         <a href="{{ route('categories.index') }}" title="Kategori Produk"
-           class="sidebar-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
             <svg class="nav-icon icon-categories" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2m14 0V9a2 2 0 0 0-2-2M5 11V9a2 2 0 0 1 2-2m0 0V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2M7 7h10" />
             </svg>
@@ -266,7 +266,7 @@
         </a>
 
         <a href="{{ route('units.index') }}" title="Satuan Barang"
-           class="sidebar-link {{ request()->routeIs('units.*') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('units.*') ? 'active' : '' }}">
             <svg class="nav-icon icon-units" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0ll-3-9m3 1l3 1m0 0l-3 9a5.002 5.002 0 006.001 0ll-3-9m3 1l3 1m0 0l-3 9a5.002 5.002 0 006.001 0ll-3-9M6 7l6 1m6-1l-6 1m0 0v12" />
             </svg>
@@ -279,7 +279,7 @@
         <p class="sidebar-group-title">Inventory Ledger</p>
 
         <a href="{{ route('inventory.index') }}" title="Saldo Stok Gudang"
-           class="sidebar-link {{ request()->routeIs('inventory.index') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('inventory.index') ? 'active' : '' }}">
             <svg class="nav-icon icon-products" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h4" />
@@ -288,7 +288,7 @@
         </a>
 
         <a href="{{ route('inventory.movements') }}" title="Mutasi Stok (Ledger)"
-           class="sidebar-link {{ request()->routeIs('inventory.movements') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('inventory.movements') ? 'active' : '' }}">
             <svg class="nav-icon icon-sales" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" />
             </svg>
@@ -296,7 +296,7 @@
         </a>
 
         <a href="{{ route('inventory.opnames') }}" title="Stock Opname"
-           class="sidebar-link {{ request()->routeIs('inventory.opnames') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('inventory.opnames') ? 'active' : '' }}">
             <svg class="nav-icon icon-purchases" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 12l2 2 4-4" />
             </svg>
@@ -310,7 +310,7 @@
 
         @if(auth()->user()?->can('dashboard.view') && auth()->user()?->can('orders.view'))
         <a href="{{ route('orders.index') }}" title="Order Customer"
-           class="sidebar-link {{ request()->routeIs('orders.*') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('orders.*') ? 'active' : '' }}">
             <svg class="nav-icon icon-sales" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M5 7l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12M9 7V5a3 3 0 016 0v2" />
             </svg>
@@ -320,7 +320,7 @@
 
         @can('work.view')
         <a href="{{ route('work.board') }}" title="Kanban Task Board"
-           class="sidebar-link {{ request()->routeIs('work.board') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('work.board') ? 'active' : '' }}">
             <svg class="nav-icon icon-dashboard" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 5h4v14H4V5zm6 0h4v9h-4V5zm6 0h4v12h-4V5z" />
             </svg>
@@ -328,7 +328,7 @@
         </a>
 
         <a href="{{ route('work.my-tasks') }}" title="Tugas Saya"
-           class="sidebar-link {{ request()->routeIs('work.my-tasks') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('work.my-tasks') ? 'active' : '' }}">
             <svg class="nav-icon icon-customers" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -336,7 +336,7 @@
         </a>
 
         <a href="{{ route('work.tasks') }}" title="Semua Task"
-           class="sidebar-link {{ request()->routeIs('work.tasks') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('work.tasks') ? 'active' : '' }}">
             <svg class="nav-icon icon-settings" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h10" />
             </svg>
@@ -346,7 +346,7 @@
 
         @can('shipping.view')
         <a href="{{ route('shipping.index') }}" title="Pengiriman & Resi"
-           class="sidebar-link {{ request()->routeIs('shipping.*') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('shipping.*') ? 'active' : '' }}">
             <svg class="nav-icon icon-products" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 7h11v10H3V7zm11 3h4l3 3v4h-7v-7zM7 20a2 2 0 100-4 2 2 0 000 4zm10 0a2 2 0 100-4 2 2 0 000 4z" />
             </svg>
@@ -359,7 +359,7 @@
         <p class="sidebar-group-title">Procurement</p>
 
         <a href="{{ route('procurement.index') }}" title="Procurement (PR/PO/GRN)"
-           class="sidebar-link {{ request()->routeIs('procurement.*') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('procurement.*') ? 'active' : '' }}">
             <svg class="nav-icon icon-purchases" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2m-6 9l2 2 4-4" />
             </svg>
@@ -372,7 +372,7 @@
         <p class="sidebar-group-title">Keuangan</p>
 
         <a href="{{ route('finance.transactions.index') }}" title="Transaksi Keuangan"
-           class="sidebar-link {{ request()->routeIs('finance.transactions.index') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('finance.transactions.index') ? 'active' : '' }}">
             <svg class="nav-icon icon-transactions" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
@@ -380,7 +380,7 @@
         </a>
 
         <a href="{{ route('finance.categories.index') }}" title="Kategori Transaksi"
-           class="sidebar-link {{ request()->routeIs('finance.categories.index') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('finance.categories.index') ? 'active' : '' }}">
             <svg class="nav-icon icon-fin-categories" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2" />
             </svg>
@@ -388,7 +388,7 @@
         </a>
 
         <a href="{{ route('finance.ap.index') }}" title="Hutang Supplier (AP)"
-           class="sidebar-link {{ request()->routeIs('finance.ap.*') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('finance.ap.*') ? 'active' : '' }}">
             <svg class="nav-icon icon-purchases" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z" />
             </svg>
@@ -396,7 +396,7 @@
         </a>
 
         <a href="{{ route('finance.refunds.index') }}" title="Refund Pelanggan"
-           class="sidebar-link {{ request()->routeIs('finance.refunds.*') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('finance.refunds.*') ? 'active' : '' }}">
             <svg class="nav-icon icon-transactions" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
             </svg>
@@ -406,7 +406,7 @@
 
         @can('reports.view')
         <a href="{{ route('reports.index') }}" title="Laporan (Reports)"
-           class="sidebar-link {{ request()->routeIs('reports.*') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('reports.*') ? 'active' : '' }}">
             <svg class="nav-icon icon-dashboard" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-6m4 6V7m4 10v-3M5 20h14" />
             </svg>
@@ -420,7 +420,7 @@
 
         @can('users.view')
         <a href="{{ route('users.index') }}" title="Pengguna (Users)"
-           class="sidebar-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
             <svg class="nav-icon icon-users" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 1 1 0 5.292M15 21H3v-1a6 6 0 0 1 12 0v1zm0 0h6v-1a6 6 0 0 0-9-5.197M13 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
             </svg>
@@ -430,7 +430,7 @@
 
         @can('settings.view')
         <a href="{{ route('settings.index') }}" title="Pengaturan"
-           class="sidebar-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
             <svg class="nav-icon icon-settings" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <circle cx="12" cy="12" r="3" />
@@ -441,7 +441,7 @@
 
         @can('audit.view')
         <a href="{{ route('audit.index') }}" title="Audit Log"
-           class="sidebar-link {{ request()->routeIs('audit.*') ? 'active' : '' }}">
+           wire:navigate class="sidebar-link {{ request()->routeIs('audit.*') ? 'active' : '' }}">
             <svg class="nav-icon icon-audit" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z" />
             </svg>
@@ -480,7 +480,7 @@
          style="display:none">
 
         <div class="h-16 flex items-center justify-between px-5 border-b border-border bg-[#142B4A]">
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 min-w-0">
+            <a href="{{ route('dashboard') }}" wire:navigate class="flex items-center gap-2.5 min-w-0">
                 <x-application-logo class="shrink-0" style="width:28px;height:28px" />
                 <span class="text-sm font-bold tracking-tight text-white truncate">{{ brand_name() }}</span>
             </a>
@@ -495,7 +495,7 @@
             {{-- Dashboard Group --}}
             @can('dashboard.view')
             <a href="{{ route('dashboard') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <svg class="nav-icon icon-dashboard" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="3" width="7" height="7" rx="1.5" />
                     <rect x="14" y="3" width="7" height="7" rx="1.5" />
@@ -512,7 +512,7 @@
             
             @can('pos.access')
             <a href="{{ route('sales.create') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('sales.create') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('sales.create') ? 'active' : '' }}">
                 <svg class="nav-icon icon-pos" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <rect x="2" y="3" width="20" height="14" rx="2" />
                     <line x1="6" y1="21" x2="18" y2="21" />
@@ -525,7 +525,7 @@
             </a>
 
             <a href="{{ route('pos.shifts.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('pos.shifts.*') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('pos.shifts.*') ? 'active' : '' }}">
                 <svg class="nav-icon icon-pos" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="9" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 2" />
@@ -536,7 +536,7 @@
 
             @can('sales.view')
             <a href="{{ route('sales.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs(['sales.index','sales.show']) ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs(['sales.index','sales.show']) ? 'active' : '' }}">
                 <svg class="nav-icon icon-sales" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z" />
                 </svg>
@@ -546,7 +546,7 @@
 
             @can('purchases.view')
             <a href="{{ route('purchases.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('purchases.*') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('purchases.*') ? 'active' : '' }}">
                 <svg class="nav-icon icon-purchases" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
@@ -560,7 +560,7 @@
             <p class="sidebar-group-title">Kontak & Rekan</p>
 
             <a href="{{ route('customers.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('customers.*') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('customers.*') ? 'active' : '' }}">
                 <svg class="nav-icon icon-customers" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 0 0-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 0 1 5.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 0 1 9.288 0M15 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
                 </svg>
@@ -568,7 +568,7 @@
             </a>
 
             <a href="{{ route('suppliers.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
                 <svg class="nav-icon icon-suppliers" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5" />
                 </svg>
@@ -579,7 +579,7 @@
             <p class="sidebar-group-title">Katalog Produk</p>
 
             <a href="{{ route('products.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('products.*') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('products.*') ? 'active' : '' }}">
                 <svg class="nav-icon icon-products" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
@@ -587,7 +587,7 @@
             </a>
 
             <a href="{{ route('categories.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
                 <svg class="nav-icon icon-categories" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2m14 0V9a2 2 0 0 0-2-2M5 11V9a2 2 0 0 1 2-2m0 0V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2M7 7h10" />
                 </svg>
@@ -595,7 +595,7 @@
             </a>
 
             <a href="{{ route('units.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('units.*') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('units.*') ? 'active' : '' }}">
                 <svg class="nav-icon icon-units" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0ll-3-9m3 1l3 1m0 0l-3 9a5.002 5.002 0 006.001 0ll-3-9m3 1l3 1m0 0l-3 9a5.002 5.002 0 006.001 0ll-3-9M6 7l6 1m6-1l-6 1m0 0v12" />
                 </svg>
@@ -608,7 +608,7 @@
             <p class="sidebar-group-title">Inventory Ledger</p>
 
             <a href="{{ route('inventory.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('inventory.index') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('inventory.index') ? 'active' : '' }}">
                 <svg class="nav-icon icon-products" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7z" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h4" />
@@ -617,7 +617,7 @@
             </a>
 
             <a href="{{ route('inventory.movements') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('inventory.movements') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('inventory.movements') ? 'active' : '' }}">
                 <svg class="nav-icon icon-sales" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" />
                 </svg>
@@ -625,7 +625,7 @@
             </a>
 
             <a href="{{ route('inventory.opnames') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('inventory.opnames') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('inventory.opnames') ? 'active' : '' }}">
                 <svg class="nav-icon icon-purchases" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 12l2 2 4-4" />
                 </svg>
@@ -639,7 +639,7 @@
 
             @if(auth()->user()?->can('dashboard.view') && auth()->user()?->can('orders.view'))
             <a href="{{ route('orders.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('orders.*') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('orders.*') ? 'active' : '' }}">
                 <svg class="nav-icon icon-sales" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M5 7l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12M9 7V5a3 3 0 016 0v2" />
                 </svg>
@@ -649,7 +649,7 @@
 
             @can('work.view')
             <a href="{{ route('work.board') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('work.board') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('work.board') ? 'active' : '' }}">
                 <svg class="nav-icon icon-dashboard" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 5h4v14H4V5zm6 0h4v9h-4V5zm6 0h4v12h-4V5z" />
                 </svg>
@@ -657,7 +657,7 @@
             </a>
 
             <a href="{{ route('work.my-tasks') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('work.my-tasks') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('work.my-tasks') ? 'active' : '' }}">
                 <svg class="nav-icon icon-customers" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -665,7 +665,7 @@
             </a>
 
             <a href="{{ route('work.tasks') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('work.tasks') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('work.tasks') ? 'active' : '' }}">
                 <svg class="nav-icon icon-settings" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h10" />
                 </svg>
@@ -675,7 +675,7 @@
 
             @can('shipping.view')
             <a href="{{ route('shipping.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('shipping.*') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('shipping.*') ? 'active' : '' }}">
                 <svg class="nav-icon icon-products" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 7h11v10H3V7zm11 3h4l3 3v4h-7v-7zM7 20a2 2 0 100-4 2 2 0 000 4zm10 0a2 2 0 100-4 2 2 0 000 4z" />
                 </svg>
@@ -688,7 +688,7 @@
             <p class="sidebar-group-title">Procurement</p>
 
             <a href="{{ route('procurement.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('procurement.*') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('procurement.*') ? 'active' : '' }}">
                 <svg class="nav-icon icon-purchases" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2m-6 9l2 2 4-4" />
                 </svg>
@@ -701,7 +701,7 @@
             <p class="sidebar-group-title">Keuangan</p>
 
             <a href="{{ route('finance.transactions.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('finance.transactions.index') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('finance.transactions.index') ? 'active' : '' }}">
                 <svg class="nav-icon icon-transactions" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>
@@ -709,7 +709,7 @@
             </a>
 
             <a href="{{ route('finance.categories.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('finance.categories.index') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('finance.categories.index') ? 'active' : '' }}">
                 <svg class="nav-icon icon-fin-categories" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2" />
                 </svg>
@@ -717,7 +717,7 @@
             </a>
 
             <a href="{{ route('finance.ap.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('finance.ap.*') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('finance.ap.*') ? 'active' : '' }}">
                 <svg class="nav-icon icon-purchases" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z" />
                 </svg>
@@ -725,7 +725,7 @@
             </a>
 
             <a href="{{ route('finance.refunds.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('finance.refunds.*') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('finance.refunds.*') ? 'active' : '' }}">
                 <svg class="nav-icon icon-transactions" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                 </svg>
@@ -735,7 +735,7 @@
 
             @can('reports.view')
             <a href="{{ route('reports.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('reports.*') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('reports.*') ? 'active' : '' }}">
                 <svg class="nav-icon icon-dashboard" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-6m4 6V7m4 10v-3M5 20h14" />
                 </svg>
@@ -749,7 +749,7 @@
 
             @can('users.view')
             <a href="{{ route('users.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
                 <svg class="nav-icon icon-users" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 1 1 0 5.292M15 21H3v-1a6 6 0 0 1 12 0v1zm0 0h6v-1a6 6 0 0 0-9-5.197M13 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
                 </svg>
@@ -759,7 +759,7 @@
 
             @can('settings.view')
             <a href="{{ route('settings.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
                 <svg class="nav-icon icon-settings" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <circle cx="12" cy="12" r="3" />
@@ -770,7 +770,7 @@
 
             @can('audit.view')
             <a href="{{ route('audit.index') }}" @click="sidebarOpen=false"
-               class="sidebar-link {{ request()->routeIs('audit.*') ? 'active' : '' }}">
+               wire:navigate class="sidebar-link {{ request()->routeIs('audit.*') ? 'active' : '' }}">
                 <svg class="nav-icon icon-audit" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z" />
                 </svg>
