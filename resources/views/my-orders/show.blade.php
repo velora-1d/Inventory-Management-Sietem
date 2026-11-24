@@ -146,6 +146,13 @@
                         <div class="rounded-2xl border border-[#DCE3EA] bg-white p-5 shadow-sm space-y-3">
                             <h2 class="text-sm font-bold text-[#142B4A]">Pembayaran &amp; Konfirmasi</h2>
 
+                            @if($order->latestPayment && $order->latestPayment->gateway !== 'manual' && str_starts_with((string) $order->latestPayment->notes, 'http'))
+                                <a href="{{ $order->latestPayment->notes }}"
+                                   class="block w-full rounded-xl bg-[#2563EB] px-4 py-3 text-center text-xs font-bold text-white hover:bg-[#1D4ED8]">
+                                    Bayar Sekarang via {{ strtoupper($order->latestPayment->gateway) }}
+                                </a>
+                            @endif
+
                             @if($bankInfo['account_number'] !== '')
                                 <div class="rounded-xl border border-blue-200 bg-blue-50/50 p-3 text-xs text-[#142B4A] space-y-0.5">
                                     <p class="font-bold">Rekening Tujuan Transfer</p>

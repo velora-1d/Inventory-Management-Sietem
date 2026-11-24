@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PaymentMethod;
 use App\Models\Category;
 use App\Models\CustomerAddress;
 use App\Models\Product;
+use App\Models\Sale;
 use App\Payments\PaymentGatewayManager;
 use App\Services\CustomerOrderService;
 use App\Services\InventoryLedgerService;
@@ -150,7 +152,7 @@ class ShopController extends Controller
         ));
     }
 
-    public function placeOrder(Request $request, CustomerOrderService $orderService): RedirectResponse
+    public function placeOrder(Request $request, CustomerOrderService $orderService, PaymentGatewayManager $paymentManager): RedirectResponse
     {
         $rules = [
             'delivery_type' => ['required', 'in:pickup,delivery'],
@@ -197,6 +199,39 @@ class ShopController extends Controller
         }
 
         session()->forget(self::CART_SESSION_KEY);
+
+        $paymentMethod = PaymentMethod::tryFrom((string) ($validated['payment_method'] ?? ''));
+        $requestedGateway = $validated['gateway'] ?? null;
+
+        if ($paymentMethod && $paymentManager->shouldUseGateway($paymentMethod, $requestedGateway)) {
+            try {
+                $gateway = $paymentManager->driver($requestedGateway);
+                $pseudoSale = new Sale([
+                    'invoice_number' => $order->order_number,
+                    'total' => $order->total,
+                    'payment_method' => $paymentMethod,
+                ]);
+                $checkout = $gateway->createCheckout(
+                    $pseudoSale,
+                    route('my-orders.show', $order),
+                    ['method' => $paymentMethod->value]
+                );
+
+                $order->payments()->latest('id')->first()?->update([
+                    'gateway' => $gateway->key(),
+                    'reference' => $checkout->reference,
+                    'notes' => $checkout->checkoutUrl ?: null,
+                ]);
+
+                if ($checkout->requiresRedirect && !empty($checkout->checkoutUrl)) {
+                    return redirect()->away($checkout->checkoutUrl);
+                }
+            } catch (\Throwable $e) {
+                return redirect()
+                    ->route('my-orders.show', $order)
+                    ->with('error', 'Pesanan dibuat, tetapi gagal membuka halaman pembayaran: ' . $e->getMessage());
+            }
+        }
 
         return redirect()
             ->route('my-orders.show', $order)
