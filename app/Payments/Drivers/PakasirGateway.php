@@ -142,16 +142,16 @@ class PakasirGateway implements PaymentGatewayInterface
 
         $transaction = $detail['transaction'] ?? null;
         if (!$transaction) {
-            throw new RuntimeException('Pakasir transaction detail not found via API.');
+            throw new RuntimeException($this->displayName() . ' transaction detail not found via API.');
         }
 
         if (($transaction['project'] ?? null) !== $config['slug']) {
-            throw new RuntimeException('Pakasir project slug mismatch.');
+            throw new RuntimeException($this->displayName() . ' project slug mismatch.');
         }
 
         $verifiedAmount = (int) ($transaction['amount'] ?? 0);
         if ($verifiedAmount !== $expectedAmount) {
-            throw new RuntimeException('Pakasir transaction amount mismatch.');
+            throw new RuntimeException($this->displayName() . ' transaction amount mismatch.');
         }
 
         $rawStatus = strtolower((string) ($transaction['status'] ?? $payload['status']));
@@ -185,7 +185,7 @@ class PakasirGateway implements PaymentGatewayInterface
                 ])
                 ->throw();
         } catch (RequestException $exception) {
-            throw new RuntimeException('Gagal menghubungi gateway Pakasir.', previous: $exception);
+            throw new RuntimeException('Gagal menghubungi gateway ' . $this->displayName() . '.', previous: $exception);
         }
 
         return $response->json() ?? [];
@@ -211,11 +211,16 @@ class PakasirGateway implements PaymentGatewayInterface
 
         if (empty($config['api_key']) || empty($config['slug']) || empty($config['base_url'])) {
             throw ValidationException::withMessages([
-                'payment_gateway' => 'Konfigurasi Pakasir belum lengkap (isi di Settings atau .env).',
+                'payment_gateway' => 'Konfigurasi ' . $this->displayName() . ' belum lengkap (isi di Settings atau .env).',
             ]);
         }
 
         return $config;
+    }
+
+    protected function displayName(): string
+    {
+        return 'Pakasir';
     }
 
     /**

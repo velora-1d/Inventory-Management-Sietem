@@ -9,6 +9,7 @@ use App\Payments\Drivers\GenericWebhookGateway;
 use App\Payments\Drivers\ManualGateway;
 use App\Payments\Drivers\MidtransGateway;
 use App\Payments\Drivers\PakasirGateway;
+use App\Payments\Drivers\VeraPayGateway;
 use App\Payments\Drivers\XenditGateway;
 use Closure;
 use Illuminate\Contracts\Container\Container;
@@ -130,6 +131,7 @@ class PaymentGatewayManager
         return match ($key) {
             'manual' => $this->container->make(ManualGateway::class),
             'pakasir' => $this->container->make(PakasirGateway::class),
+            'verapay' => $this->container->make(VeraPayGateway::class),
             'midtrans' => $this->container->make(MidtransGateway::class),
             'xendit' => $this->container->make(XenditGateway::class),
             'custom' => $this->container->make(GenericWebhookGateway::class),

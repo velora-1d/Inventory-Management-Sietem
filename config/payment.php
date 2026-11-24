@@ -6,7 +6,7 @@ return [
     | Default Payment Gateway Driver
     |--------------------------------------------------------------------------
     |
-    | Supported drivers: "manual", "pakasir", "midtrans", "xendit", "custom"
+    | Supported drivers: "manual", "pakasir", "verapay", "midtrans", "xendit", "custom"
     | Can be overridden at runtime via the "payment_gateway" database setting.
     |
     */
@@ -46,6 +46,18 @@ return [
             'base_url' => env('PAKASIR_BASE_URL', 'https://app.pakasir.com'),
             'slug' => env('PAKASIR_SLUG'),
             'callback_url' => env('PAKASIR_CALLBACK_URL'),
+        ],
+
+        'verapay' => [
+            'driver' => 'verapay',
+            'label' => 'VeraPay Payment Hub',
+            'api_key' => env('VERAPAY_API_KEY'),
+            'base_url' => env('VERAPAY_API_URL', 'https://verapay.digital'),
+            'slug' => env('VERAPAY_SLUG'),
+            'project_id' => env('VERAPAY_PROJECT_ID'),
+            'prefix' => env('VERAPAY_PREFIX'),
+            'callback_url' => env('VERAPAY_WEBHOOK_URL'),
+            'webhook_secret' => env('VERAPAY_WEBHOOK_SECRET'),
         ],
 
         'midtrans' => [

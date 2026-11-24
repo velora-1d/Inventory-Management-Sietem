@@ -32,6 +32,7 @@
                     <select id="value" wire:model="value" class="block w-full rounded-md border-input bg-background shadow-sm focus:border-ring focus:ring-ring sm:text-sm">
                         <option value="manual">Manual / Offline (Cash, Transfer, QRIS Statis)</option>
                         <option value="pakasir">Pakasir Payment Gateway</option>
+                        <option value="verapay">VeraPay Payment Hub</option>
                         <option value="midtrans">Midtrans Snap</option>
                         <option value="xendit">Xendit Invoice</option>
                         <option value="custom">Custom / Generic Webhook Gateway</option>
