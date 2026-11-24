@@ -17,8 +17,10 @@ class UserController extends Controller
         $users = Cache::remember($cacheKey, 300, function () use ($query) {
             return User::query()
                 ->when($query, function ($q) use ($query) {
-                    $q->where('name', 'like', "%{$query}%")
-                        ->orWhere('email', 'like', "%{$query}%");
+                    $q->where(function ($sub) use ($query) {
+                        $sub->whereLike('name', "%{$query}%", caseSensitive: false)
+                            ->orWhereLike('email', "%{$query}%", caseSensitive: false);
+                    });
                 })
                 ->limit(20)
                 ->get()

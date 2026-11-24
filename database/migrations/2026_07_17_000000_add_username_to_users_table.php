@@ -2,8 +2,9 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 return new class extends Migration
 {
@@ -17,9 +18,21 @@ return new class extends Migration
                 $table->string('username')->nullable()->unique()->after('name');
             });
 
-            // Set default username for existing admin or any existing users
+            // Set default username for existing admin or any existing users (database-agnostic)
             DB::table('users')->where('email', 'admin@admin.com')->update(['username' => 'admin']);
-            DB::table('users')->whereNull('username')->update(['username' => DB::raw("SUBSTRING_INDEX(email, '@', 1)")]);
+
+            $users = DB::table('users')->whereNull('username')->select('id', 'email')->get();
+            foreach ($users as $user) {
+                $base = Str::of((string) $user->email)->before('@')->slug('_')->value() ?: 'user';
+                $candidate = $base;
+                $suffix = 1;
+                while (DB::table('users')->where('username', $candidate)->exists()) {
+                    $candidate = "{$base}_{$suffix}";
+                    $suffix++;
+                }
+
+                DB::table('users')->where('id', $user->id)->update(['username' => $candidate]);
+            }
         }
     }
 

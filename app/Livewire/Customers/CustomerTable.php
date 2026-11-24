@@ -11,14 +11,11 @@ use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\Facades\PowerGrid;
-use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Components\SetUp\Exportable;
 
 final class CustomerTable extends PowerGridComponent
 {
-    use WithExport;
-
     public string $tableName = 'customer-table';
     public string $sortField = 'created_at';
     public string $sortDirection = 'desc';

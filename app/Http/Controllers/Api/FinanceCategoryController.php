@@ -17,7 +17,7 @@ class FinanceCategoryController extends Controller
         $categories = Cache::remember($cacheKey, 300, function () use ($query) {
             return FinanceCategory::query()
                 ->when($query, function ($q) use ($query) {
-                    $q->where('name', 'like', "%{$query}%");
+                    $q->whereLike('name', "%{$query}%", caseSensitive: false);
                 })
                 ->limit(20)
                 ->get()

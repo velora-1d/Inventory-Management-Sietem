@@ -67,8 +67,8 @@ class ProductTable extends Component
             ->with(['category', 'unit'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sub) {
-                    $sub->where('name', 'ilike', '%' . $this->search . '%')
-                       ->orWhere('sku', 'ilike', '%' . $this->search . '%');
+                    $sub->whereLike('name', '%' . $this->search . '%', caseSensitive: false)
+                       ->orWhereLike('sku', '%' . $this->search . '%', caseSensitive: false);
                 });
             })
             ->when($this->categoryId, function ($q) {

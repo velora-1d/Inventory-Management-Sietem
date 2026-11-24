@@ -4,6 +4,7 @@ namespace App\Livewire\FinanceTransactions;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\HtmlString;
 use App\Models\FinanceCategory;
 use App\Models\FinanceTransaction;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,21 +15,18 @@ use App\Exceptions\FinanceTransactionException;
 use PowerComponents\LivewirePowerGrid\Facades\Filter;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\Facades\PowerGrid;
-use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Components\SetUp\Exportable;
 
 final class FinanceTransactionTable extends PowerGridComponent
 {
-    use WithExport;
-
     public string $tableName = 'finance-transaction-table';
     public string $sortField = 'transaction_date';
     public string $sortDirection = 'desc';
 
     public function boot(): void
     {
-        config(['livewire-powergrid.filter' => 'outside']);
+        config(['livewire-powergrid.filter' => 'inline']);
     }
 
     public function setUp(): array
@@ -63,13 +61,13 @@ final class FinanceTransactionTable extends PowerGridComponent
                 $tag = $model->reference_type ? '<span class="text-xs font-semibold px-2 py-0.5 rounded bg-blue-100 text-blue-800">Auto</span>' : '<span class="text-xs font-semibold px-2 py-0.5 rounded bg-gray-100 text-gray-800">Manual</span>';
                 
                 if (!empty($model->external_reference)) {
-                    return $tag . ' ' . $model->external_reference;
+                    return new HtmlString($tag . ' ' . e($model->external_reference));
                 }
-                return $tag . ' ' . $model->code;
+                return new HtmlString($tag . ' ' . e($model->code));
             })
             ->add('category_name', fn(FinanceTransaction $model) => $model->category->name)
             ->add('type_badge', function(FinanceTransaction $model) {
-                return view('components.status-badge', ['status' => $model->category->type])->render();
+                return new HtmlString(view('components.status-badge', ['status' => $model->category->type])->render());
             })
             ->add('description', fn(FinanceTransaction $model) => Str::limit($model->description, 30))
             ->add('amount')
@@ -77,7 +75,7 @@ final class FinanceTransactionTable extends PowerGridComponent
                 $type = $model->category->type->value ?? '';
                 $color = $type === 'income' ? 'text-emerald-600' : 'text-red-600';
                 $prefix = $type === 'income' ? '+' : '-';
-                return "<div class=\"text-right {$color} font-medium\">{$prefix} " . format_money($model->amount) . "</div>";
+                return new HtmlString("<div class=\"text-right {$color} font-medium\">{$prefix} " . e(format_money($model->amount)) . "</div>");
             })
             ->add('creator_name', fn(FinanceTransaction $model) => $model->creator->name)
             ->add('created_at')

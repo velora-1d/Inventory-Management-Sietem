@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use App\Models\FinanceCategory;
 use App\Enums\FinanceCategoryType;
 use App\Services\FinanceCategoryService;
+use Illuminate\Support\HtmlString;
 use Illuminate\Database\Eloquent\Builder;
 use App\Exceptions\FinanceCategoryException;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -13,21 +14,18 @@ use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\Facades\Filter;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\Facades\PowerGrid;
-use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Components\SetUp\Exportable;
 
 final class FinanceCategoryTable extends PowerGridComponent
 {
-    use WithExport;
-
     public string $tableName = 'finance-category-table';
     public string $sortField = 'created_at';
     public string $sortDirection = 'desc';
 
     public function boot(): void
     {
-        config(['livewire-powergrid.filter' => 'outside']);
+        config(['livewire-powergrid.filter' => 'inline']);
     }
 
     public function setUp(): array
@@ -60,7 +58,7 @@ final class FinanceCategoryTable extends PowerGridComponent
             ->add('slug')
             ->add('type', fn(FinanceCategory $model) => $model->type->value)
             ->add('type_badge', function (FinanceCategory $model) {
-                return view('components.status-badge', ['status' => $model->type])->render();
+                return new HtmlString(view('components.status-badge', ['status' => $model->type])->render());
             })
             ->add('description', fn(FinanceCategory $model) => Str::limit($model->description, 50))
             ->add('created_at');

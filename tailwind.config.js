@@ -2,9 +2,6 @@ import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
 
 export default {
-    presets: [
-        require("./vendor/power-components/livewire-powergrid/tailwind.config.js"),
-    ],
     darkMode: 'class',
     content: [
         "./vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php",
@@ -13,7 +10,7 @@ export default {
         "./resources/views/livewire/**/*.blade.php",
         "./app/Livewire/**/*Table.php",
         "./vendor/power-components/livewire-powergrid/resources/views/**/*.php",
-        "./vendor/power-components/livewire-powergrid/src/Themes/Tailwind.php",
+        "./vendor/power-components/livewire-powergrid/src/Themes/**/*.php",
         "./app/Enums/**/*.php",
     ],
 

@@ -6,25 +6,26 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
-        "blade-ui-kit/blade-heroicons": "^2.6",
-        "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.10.1",
+        "php": "^8.3",
+        "blade-ui-kit/blade-heroicons": "^2.7",
+        "laravel/framework": "^13.0",
+        "laravel/tinker": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.35",
         "opcodesio/log-viewer": "^3.24",
-        "openspout/openspout": "^4.0",
-        "power-components/livewire-powergrid": "^6.0"
+        "openspout/openspout": "^5.0",
+        "power-components/livewire-powergrid": "^7.0",
+        "spatie/laravel-permission": "^8.5"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.16",
         "fakerphp/faker": "^1.23",
+        "fruitcake/laravel-debugbar": "^4.0",
         "laravel/breeze": "^2.3",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
-        "phpunit/phpunit": "^11.5.3"
+        "phpunit/phpunit": "^12.0"
     },
     "autoload": {
         "psr-4": {
@@ -33,7 +34,8 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "app/Helpers/CurrencyHelper.php"
+            "app/Helpers/CurrencyHelper.php",
+            "app/Helpers/BrandingHelper.php"
         ]
     },
     "autoload-dev": {

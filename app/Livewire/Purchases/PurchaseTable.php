@@ -9,27 +9,25 @@ use App\Models\User;
 use App\Enums\PurchaseStatus;
 use App\Services\PurchaseService;
 use App\Exceptions\PurchaseException;
+use Illuminate\Support\HtmlString;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\Facades\Filter;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\Facades\PowerGrid;
-use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Components\SetUp\Exportable;
 
 final class PurchaseTable extends PowerGridComponent
 {
-    use WithExport;
-
     public string $tableName = 'purchase-table';
     public string $sortField = 'created_at';
     public string $sortDirection = 'desc';
 
     public function boot(): void
     {
-        config(['livewire-powergrid.filter' => 'outside']);
+        config(['livewire-powergrid.filter' => 'inline']);
     }
 
     public function setUp(): array
@@ -59,12 +57,12 @@ final class PurchaseTable extends PowerGridComponent
     {
         return PowerGrid::fields()
             ->add('id')
-            ->add('invoice_number', fn(Purchase $model) => $model->invoice_number ?: '<span class="italic text-gray-400">-</span>')
+            ->add('invoice_number', fn (Purchase $model) => $model->invoice_number ?: new HtmlString('<span class="italic text-gray-400">-</span>'))
             ->add('supplier_name', fn(Purchase $model) => $model->supplier ? $model->supplier->name : '-')
             ->add('purchase_date_formatted', fn(Purchase $model) => Carbon::parse($model->purchase_date)->format('d/m/Y'))
             ->add('total_formatted', fn(Purchase $model) => format_money((float) $model->total))
-            ->add('status_badge', function(Purchase $model) {
-                return view('components.status-badge', ['status' => $model->status])->render();
+            ->add('status_badge', function (Purchase $model) {
+                return new HtmlString(view('components.status-badge', ['status' => $model->status])->render());
             })
             ->add('date_period', fn() => '') // Virtual field for filter
             ->add('creator_name', fn(Purchase $model) => $model->creator ? $model->creator->name : '-')

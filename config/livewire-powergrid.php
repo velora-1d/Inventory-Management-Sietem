@@ -1,5 +1,7 @@
 <?php
 
+use PowerComponents\LivewirePowerGrid\Plugins\Export\OpenSpout\v5\{ExportToCsv, ExportToXLS};
+
 return [
 
     /*
@@ -7,19 +9,84 @@ return [
     | Theme
     |--------------------------------------------------------------------------
     |
-    | PowerGrid supports Tailwind and Bootstrap 5 themes.
-    | Configure here the theme of your choice.
+    | PowerGrid ships Tailwind, DaisyUI and Flux. Configure the theme of your
+    | choice by registered name ('tailwind', 'daisyui', 'flux') or by FQCN.
     */
 
-    'theme' => \PowerComponents\LivewirePowerGrid\Themes\Tailwind::class,
-    //'theme' => \PowerComponents\LivewirePowerGrid\Themes\Bootstrap5::class,
+    'theme' => 'tailwind',
+    // 'theme' => 'daisyui',
+    // 'theme' => 'flux',
+    // 'theme' => \PowerComponents\LivewirePowerGrid\Themes\Tailwind::class, // FQCN also works
+
+    /*
+    |--------------------------------------------------------------------------
+    | Theme overrides (no-code)
+    |--------------------------------------------------------------------------
+    |
+    | Restyle any theme token without writing a Theme class. These values are
+    | merged on top of the active theme with the highest precedence, using the
+    | same nested token keys the theme defines. Example:
+    |
+    |   'theme_overrides' => [
+    |       'table' => ['layout' => ['th' => 'font-bold px-4 py-3']],
+    |   ],
+    |
+    */
+
+    'theme_overrides' => [],
+
+    'cache_ttl' => null,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Escape closure fields
+    |--------------------------------------------------------------------------
+    |
+    | Strings returned by closures in fields() are escaped. Return an
+    | HtmlString to render HTML. Set to false to render closure strings as raw
+    | HTML (v6 behavior); escape user data yourself with e() in that mode.
+    |
+    */
+
+    'escape_closure_fields' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Front-end assets
+    |--------------------------------------------------------------------------
+    |
+    | Import the PowerGrid JS through your bundler (Vite):
+    |
+    |   // resources/js/app.js  (Tailwind / DaisyUI)
+    |   import "../../vendor/power-components/livewire-powergrid/resources/js/powergrid.js";
+    |
+    |   // Flux — ships its own dropdown JS
+    |   import "../../vendor/power-components/livewire-powergrid/resources/js/powergrid-flux.js";
+    |
+    */
+
+    /*
+    |--------------------------------------------------------------------------
+    | Max per page
+    |--------------------------------------------------------------------------
+    |
+    | Upper bound for the number of rows fetched per page. The per-page value
+    | travels in the component state, so this ceiling keeps a single request
+    | from loading an unbounded number of rows. Set to 0 to disable the limit.
+    |
+    */
+
+    'max_per_page' => 1000,
 
     /*
     |--------------------------------------------------------------------------
     | Plugins
     |--------------------------------------------------------------------------
     |
-    | Plugins used: flatpickr.js to datepicker.
+    | Plugins used: flatpickr.js to datepicker, slim-select or tom-select to
+    | multi-select. Both libraries must be exposed globally by your bundle
+    | (window.flatpickr, window.SlimSelect / window.TomSelect). The 'slim' and
+    | 'tom' arrays are passed as options to the library constructor.
     |
     */
 
@@ -33,7 +100,7 @@ return [
                     'locale' => 'id',
                     'dateFormat' => 'd/m/Y H:i',
                     'enableTime' => true,
-                    'time_24hr'  => true,
+                    'time_24hr' => true,
                 ],
                 'us' => [
                     'locale' => 'us',
@@ -52,26 +119,12 @@ return [
 
         'select' => [
             'default' => 'tom',
-
-            /*
-             * TomSelect Options
-             * https://tom-select.js.org
-             */
+            'slim' => [],
             'tom' => [
                 'plugins' => [
                     'clear_button' => [
                         'title' => 'Remove all selected options',
                     ],
-                ],
-            ],
-
-            /*
-             * Slim Select options
-             * https://slimselectjs.com/
-             */
-            'slim' => [
-                'settings' => [
-                    'alwaysOpen' => false,
                 ],
             ],
         ],
@@ -82,10 +135,14 @@ return [
     | Filters
     |--------------------------------------------------------------------------
     |
-    | PowerGrid supports inline and outside filters.
+    | PowerGrid supports inline, dropdown and flyout filters.
     | 'inline': Filters data inside the table.
-    | 'outside': Filters data outside the table.
+    | 'dropdown': Filters in a popover anchored to a Filter button, committed on Apply.
+    | 'flyout': Filters in a drawer sliding in from the side, committed on Apply.
     | 'null'
+    |
+    | Both 'dropdown' and 'flyout' hold edits in a draft and only commit when the
+    | user presses "Apply filters" (no live/debounce requests while typing).
     |
     */
 
@@ -93,29 +150,70 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Cache
+    | Filter Pill Value
     |--------------------------------------------------------------------------
     |
-    | Cache is enabled by default to improve search performance when using collections.
-    | When enabled, data is reloaded whenever the page is refreshed or a field is updated.
+    | When true, each active filter pill shows the selected value next to the
+    | filter name (e.g. "Category: Desserts") instead of the name alone.
+    |
+    | Override this per table with a showFilterPillValue(): bool method.
     |
     */
 
-    'cached_data' => true,
+    'filter_pill_value' => false,
 
     /*
     |--------------------------------------------------------------------------
-    | New Release Notification
+    | Filter Flyout
     |--------------------------------------------------------------------------
     |
-    | PowerGrid can verify if a new release is available when you create a new PowerGrid Table.
+    | Settings for the drawer used when 'filter' is set to 'flyout'.
+    | 'position': which edge the drawer slides in from ('left' or 'right').
+    | 'close_on_escape': close the drawer when the Escape key is pressed.
+    | 'close_on_click_outside': close the drawer when its backdrop is clicked.
     |
-    | This feature depends on composer/composer.
-    | To install, run: `composer require composer/composer --dev`
+    | Override these per table by calling config() in the table's boot() method.
     |
     */
 
-    'check_version' => false,
+    'filter_flyout' => [
+        'position' => 'right',
+        'close_on_escape' => true,
+        'close_on_click_outside' => true,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Filter Wire Bindings
+    |--------------------------------------------------------------------------
+    |
+    | How each filter control binds to the filter bag. The value is the Livewire
+    | modifier chain applied to wire:model — 'live.debounce.600ms', 'live',
+    | 'blur', 'lazy', or '' for a plain wire:model (a JS widget pushes its own
+    | event). Slots: value, operator, start, end, formatted.
+    |
+    | Only the entries you set are overridden. A single grid can override these
+    | by implementing filterWire() on the component.
+    |
+    */
+
+    'filter_wire' => [
+        // 'input_text' => ['value' => 'live.debounce.800ms'],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Persisting
+    |--------------------------------------------------------------------------
+    |
+    | PowerGrid supports persisting of the filters, columns and sorting.
+    | 'session': persist in the session.
+    | 'cache': persist with cache.
+    | 'cookies': persist with cookies (default).
+    |
+    */
+
+    'persist_driver' => 'cookies',
 
     /*
     |--------------------------------------------------------------------------
@@ -126,10 +224,25 @@ return [
     */
 
     'exportable' => [
-        'default'      => 'openspout_v4',
-        'openspout_v4' => [
-            'xlsx' => \PowerComponents\LivewirePowerGrid\Components\Exports\OpenSpout\v4\ExportToXLS::class,
-            'csv'  => \PowerComponents\LivewirePowerGrid\Components\Exports\OpenSpout\v4\ExportToCsv::class,
+        'default' => 'openspout_v5',
+        'openspout_v5' => [
+            'xlsx' => ExportToXLS::class,
+            'csv' => ExportToCsv::class,
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Auto-Discover Models
+    |--------------------------------------------------------------------------
+    |
+    | PowerGrid will search for Models in the directories listed below.
+    | These Models be listed as options when you run the
+    | "artisan powergrid:create" command.
+    |
+    */
+
+    'auto_discover_models_paths' => [
+        app_path('Models'),
     ],
 ];
