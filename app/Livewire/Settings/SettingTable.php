@@ -3,6 +3,7 @@
 namespace App\Livewire\Settings;
 
 use App\Models\Setting;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -41,7 +42,21 @@ final class SettingTable extends PowerGridComponent
             ->add('key')
             ->add('key_label', fn (Setting $model) => Str::title(str_replace('_', ' ', $model->key)))
             ->add('value')
-            ->add('value_limited', fn (Setting $model) => Str::limit($model->value, 50));
+            ->add('value_limited', function (Setting $model) {
+                if ($model->key === 'brand_logo') {
+                    return new HtmlString(
+                        $model->value
+                            ? '<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-sky-50 text-sky-700 border border-sky-200">Custom Logo</span>'
+                            : '<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">Default SVG</span>'
+                    );
+                }
+
+                if (Str::endsWith($model->key, ['_key', '_secret', '_token'])) {
+                    return $model->value ? '••••••••' : '-';
+                }
+
+                return Str::limit((string) $model->value, 50);
+            });
     }
 
     public function columns(): array

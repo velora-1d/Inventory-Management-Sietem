@@ -2,12 +2,13 @@
 
 namespace App\Livewire\Users;
 
-use App\Models\User;
-use Livewire\Component;
-use Livewire\Attributes\On;
 use App\DTOs\UserData;
+use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\On;
+use Livewire\Component;
+use Spatie\Permission\Models\Role;
 
 class UserForm extends Component
 {
@@ -19,6 +20,7 @@ class UserForm extends Component
     public $email;
     public $password;
     public $password_confirmation;
+    public string $role = 'cashier';
 
     public function rules(): array
     {
@@ -27,6 +29,7 @@ class UserForm extends Component
             'username' => ['required', 'string', 'max:255', Rule::unique('users', 'username')->ignore($this->user?->id)],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->user?->id)],
             'password' => [$this->isEditing ? 'nullable' : 'required', 'string', 'min:8', 'confirmed'],
+            'role' => ['required', 'string', Rule::exists('roles', 'name')],
         ];
     }
 
@@ -34,13 +37,14 @@ class UserForm extends Component
     public function handleOpenModal($name): void
     {
         if ($name === 'user-form-modal' && !$this->isEditing) {
-            $this->create(); // Ensure we reset if opening for create
+            $this->create();
         }
     }
 
     public function create(): void
     {
         $this->reset(['user', 'isEditing', 'name', 'username', 'email', 'password', 'password_confirmation']);
+        $this->role = 'cashier';
         $this->dispatch('open-modal', name: 'user-form-modal');
     }
 
@@ -53,6 +57,7 @@ class UserForm extends Component
         $this->name = $user->name;
         $this->username = $user->username;
         $this->email = $user->email;
+        $this->role = $user->getRoleNames()->first() ?? 'cashier';
         $this->password = '';
         $this->password_confirmation = '';
 
@@ -67,7 +72,8 @@ class UserForm extends Component
             name: $this->name,
             username: $this->username,
             email: $this->email,
-            password: $this->password ?: null, // Pass null if empty in edit mode
+            password: $this->password ?: null,
+            role: $this->role,
         );
 
         try {
@@ -83,9 +89,8 @@ class UserForm extends Component
             $this->dispatch('pg:eventRefresh-user-table');
             $this->dispatch('toast', message: $message, type: 'success');
 
-            // Reset after save
             $this->reset(['user', 'isEditing', 'name', 'username', 'email', 'password', 'password_confirmation']);
-
+            $this->role = 'cashier';
         } catch (\Exception $e) {
             $this->dispatch('toast', message: 'Error: ' . $e->getMessage(), type: 'error');
         }
@@ -93,6 +98,8 @@ class UserForm extends Component
 
     public function render()
     {
-        return view('livewire.users.user-form');
+        return view('livewire.users.user-form', [
+            'roles' => Role::orderBy('name')->pluck('name'),
+        ]);
     }
 }

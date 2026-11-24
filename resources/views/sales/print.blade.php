@@ -242,9 +242,15 @@
         <!-- Header -->
         <div class="header">
             <div class="header-left">
-                <div class="logo-box">TB</div>
+                @if(brand_logo_url())
+                    <div class="logo-box" style="border:none;width:auto;">
+                        <img src="{{ brand_logo_url() }}" alt="{{ brand_name() }}" style="max-height:40px;max-width:70px;object-fit:contain;">
+                    </div>
+                @else
+                    <div class="logo-box">{{ brand_short_code() }}</div>
+                @endif
                 <div class="company-info">
-                    <div class="company-name">{{ \App\Models\Setting::get('store_name', config('app.name')) }}</div>
+                    <div class="company-name">{{ \App\Models\Setting::get('store_name', brand_name()) }}</div>
                     <div class="company-desc">Menjual: Bahan Bangunan, Alat Teknik, Cat, Dll.</div>
                     <div class="company-address">
                         {{ \App\Models\Setting::get('store_address', 'Jl. Default No. 1') }}<br>

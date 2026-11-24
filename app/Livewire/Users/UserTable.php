@@ -4,19 +4,18 @@ namespace App\Livewire\Users;
 
 use App\Models\User;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\Facades\PowerGrid;
-use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Components\SetUp\Exportable;
 
 final class UserTable extends PowerGridComponent
 {
-    use WithExport;
-
     public string $tableName = 'user-table';
     public string $sortField = 'created_at';
     public string $sortDirection = 'desc';
@@ -40,7 +39,7 @@ final class UserTable extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return User::query();
+        return User::query()->with('roles');
     }
 
     public function fields(): PowerGridFields
@@ -50,6 +49,18 @@ final class UserTable extends PowerGridComponent
             ->add('name')
             ->add('username')
             ->add('email')
+            ->add('role_badge', function (User $model) {
+                $role = $model->getRoleNames()->first() ?? 'unassigned';
+                $label = Str::title(str_replace('_', ' ', $role));
+                $badgeClass = match ($role) {
+                    'owner', 'super_admin' => 'bg-[#142B4A] text-white',
+                    'admin', 'manager' => 'bg-blue-100 text-blue-800 border border-blue-200',
+                    'finance', 'cashier' => 'bg-emerald-100 text-emerald-800 border border-emerald-200',
+                    default => 'bg-slate-100 text-slate-700 border border-slate-200',
+                };
+
+                return new HtmlString("<span class=\"inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold {$badgeClass}\">" . e($label) . '</span>');
+            })
             ->add('created_at_formatted', fn (User $model) => Carbon::parse($model->created_at)->format('d/m/Y H:i'));
     }
 
@@ -74,6 +85,8 @@ final class UserTable extends PowerGridComponent
             Column::make('Email', 'email')
                 ->searchable()
                 ->sortable(),
+
+            Column::make('Role', 'role_badge'),
 
             Column::make('Created At', 'created_at_formatted', 'created_at')
                 ->sortable(),

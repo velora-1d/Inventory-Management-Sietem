@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fira+Code:wght@300..700&family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap');
-@import './../../vendor/power-components/livewire-powergrid/dist/tailwind.css';
+@import './../../vendor/power-components/livewire-powergrid/resources/css/base.css';
 @import "tom-select/dist/css/tom-select.bootstrap5.css";
 @import "flatpickr/dist/flatpickr.min.css";
 @import "tw-animate-css";
@@ -12,26 +12,27 @@
 
 @layer base {
     :root {
-        --background: oklch(0.985 0.008 75); /* #FAF7F2 (Warm Cream) */
-        --foreground: oklch(0.145 0 0); /* #111827 */
-        --card: oklch(1 0 0); /* #FFFFFF */
-        --card-foreground: oklch(0.145 0 0);
-        --popover: oklch(1 0 0);
-        --popover-foreground: oklch(0.145 0 0);
-        --primary: oklch(0.205 0 0); /* #2563EB */
-        --primary-foreground: oklch(0.985 0 0);
-        --secondary: oklch(0.97 0 0); /* #16A34A */
-        --secondary-foreground: oklch(0.205 0 0);
-        --muted: oklch(0.97 0 0);
-        --muted-foreground: oklch(0.556 0 0); /* #6B7280 */
-        --accent: oklch(0.97 0 0);
-        --accent-foreground: oklch(0.205 0 0);
-        --destructive: oklch(0.577 0.245 27.325); /* #DC2626 */
-        --destructive-foreground: 0 0% 100%;
-        --border: oklch(0.922 0 0); /* #E5E7EB */
-        --input: oklch(0.922 0 0); /* #E5E7EB */
-        --ring: oklch(0.708 0 0); /* #2563EB */
-        --radius: 0.625rem; /* 8px */ --chart-1: oklch(0.87 0 0); --chart-2: oklch(0.556 0 0); --chart-3: oklch(0.439 0 0); --chart-4: oklch(0.371 0 0); --chart-5: oklch(0.269 0 0); --sidebar: oklch(0.985 0 0); --sidebar-foreground: oklch(0.145 0 0); --sidebar-primary: oklch(0.205 0 0); --sidebar-primary-foreground: oklch(0.985 0 0); --sidebar-accent: oklch(0.97 0 0); --sidebar-accent-foreground: oklch(0.205 0 0); --sidebar-border: oklch(0.922 0 0); --sidebar-ring: oklch(0.708 0 0);
+        --background: #F8FAFC;
+        --foreground: #1F2937;
+        --card: #FFFFFF;
+        --card-foreground: #1F2937;
+        --popover: #FFFFFF;
+        --popover-foreground: #1F2937;
+        --primary: #2563EB;
+        --primary-foreground: #FFFFFF;
+        --secondary: #0F766E;
+        --secondary-foreground: #FFFFFF;
+        --muted: #F1F5F9;
+        --muted-foreground: #64748B;
+        --accent: #EFF6FF;
+        --accent-foreground: #142B4A;
+        --destructive: #DC2626;
+        --destructive-foreground: #FFFFFF;
+        --border: #DCE3EA;
+        --input: #DCE3EA;
+        --ring: #2563EB;
+        --radius: 0.5rem;
+        --chart-1: #2563EB; --chart-2: #10B981; --chart-3: #0F766E; --chart-4: #142B4A; --chart-5: #D97706; --sidebar: #FFFFFF; --sidebar-foreground: #1F2937; --sidebar-primary: #142B4A; --sidebar-primary-foreground: #FFFFFF; --sidebar-accent: #EFF6FF; --sidebar-accent-foreground: #2563EB; --sidebar-border: #DCE3EA; --sidebar-ring: #2563EB;
     }
 
     /* Custom Scrollbar */
@@ -242,19 +243,19 @@
 
 /* Primary Button Component */
 .bg-primary {
-    background: linear-gradient(135deg, rgb(37, 99, 235) 0%, rgb(79, 70, 229) 100%) !important;
+    background: linear-gradient(135deg, #2563EB 0%, #142B4A 100%) !important;
     color: #ffffff !important;
     border-radius: 0.5rem !important; /* rounded-lg */
     font-weight: 600 !important;
     letter-spacing: 0.025em !important;
-    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.15) !important;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.16) !important;
     border: none !important;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 .bg-primary:hover {
-    background: linear-gradient(135deg, rgb(29, 78, 216) 0%, rgb(67, 56, 202) 100%) !important;
-    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.25) !important;
+    background: linear-gradient(135deg, #1D4ED8 0%, #142B4A 100%) !important;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25) !important;
     transform: translateY(-1px) !important;
 }
 
@@ -337,13 +338,13 @@ td button[class*="bg-yellow-"]:hover, td a[class*="bg-yellow-"]:hover {
     transform: translateY(-1.5px) !important;
 }
 
-/* Hover - Print/Sync Button (Indigo) */
+/* Hover - Print/Sync Button (Teal) */
 td button.bg-indigo-500:hover, td a.bg-indigo-500:hover, 
 td button[class*="bg-indigo-"]:hover, td a[class*="bg-indigo-"]:hover {
-    background-color: rgb(79, 70, 229) !important;
+    background-color: #0F766E !important;
     color: #ffffff !important;
-    border-color: rgb(79, 70, 229) !important;
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25) !important;
+    border-color: #0F766E !important;
+    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25) !important;
     transform: translateY(-1.5px) !important;
 }
 

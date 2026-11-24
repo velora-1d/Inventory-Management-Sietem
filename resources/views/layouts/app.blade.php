@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}{{ !empty($title) ? ' | ' . $title : '' }}</title>
+        <title>{{ brand_name() }}{{ !empty($title) ? ' | ' . $title : '' }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -21,20 +21,31 @@
             .nav-chevron-open { transform:rotate(180deg); }
         </style>
     </head>
-    <body class="font-sans antialiased bg-background text-foreground" x-data="{ sidebarOpen: false }">
+    <body class="font-sans antialiased bg-background text-foreground" x-data="{ sidebarOpen: false, sidebarCollapsed: localStorage.getItem('sidebar_collapsed') === 'true', toggleSidebar() { this.sidebarCollapsed = !this.sidebarCollapsed; localStorage.setItem('sidebar_collapsed', this.sidebarCollapsed ? 'true' : 'false'); } }">
         <div class="min-h-screen bg-background flex">
             <!-- Sidebar -->
             @include('layouts.navigation')
 
             <!-- Main Content Area -->
-            <div class="flex-1 flex flex-col min-w-0 lg:ml-64">
+            <div class="flex-1 flex flex-col min-w-0 transition-all duration-200" :class="sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-64'">
                 <!-- Top Navbar -->
                 <header class="h-16 border-b border-slate-100 bg-white/85 backdrop-blur-md flex items-center justify-between px-6 sticky top-0 z-40 shadow-sm">
-                    <!-- Left Section: Mobile Menu & Greeting -->
-                    <div class="flex items-center gap-4">
+                    <!-- Left Section: Mobile Menu, Desktop Collapse & Greeting -->
+                    <div class="flex items-center gap-3">
                         <!-- Mobile Menu Button -->
-                        <button @click="sidebarOpen = true" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 text-slate-600 transition-colors">
+                        <button @click="sidebarOpen = true" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 text-slate-600 transition-colors" aria-label="Buka Menu">
                             <x-heroicon-o-bars-3 class="h-5 w-5" />
+                        </button>
+
+                        <!-- Desktop Sidebar Collapse Toggle -->
+                        <button @click="toggleSidebar()"
+                                type="button"
+                                class="hidden lg:inline-flex items-center justify-center p-2 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-slate-100 text-[#142B4A] transition-colors"
+                                :title="sidebarCollapsed ? 'Perluas Sidebar' : 'Ciutkan Sidebar'"
+                                :aria-expanded="!sidebarCollapsed">
+                            <svg class="w-4 h-4 transition-transform duration-200" :class="sidebarCollapsed ? 'rotate-180' : ''" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                            </svg>
                         </button>
 
                         <!-- Dynamic Greeting -->
@@ -75,12 +86,14 @@
                         </div>
 
                         <!-- POS Cashier Quick Shortcut -->
-                        <a href="{{ route('sales.create') }}" class="flex items-center gap-2 text-xs font-bold text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 px-4 py-2 rounded-xl shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200">
+                        @can('pos.access')
+                        <a href="{{ route('sales.create') }}" class="flex items-center gap-2 text-xs font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] px-4 py-2 rounded-xl shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
                             <span>Transaksi Baru</span>
                         </a>
+                        @endcan
 
                         <!-- Notification Bell -->
                         <div class="relative text-slate-400 hover:text-slate-600 transition-colors cursor-pointer group">

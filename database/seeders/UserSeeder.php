@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
@@ -14,11 +13,17 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'name' => 'admin',
-            'username' => 'admin',
-            'email' => 'admin@admin.com',
-            'password' => Hash::make('password'),
-        ]);
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@admin.com'],
+            [
+                'name' => 'admin',
+                'username' => 'admin',
+                'password' => Hash::make('password'),
+            ]
+        );
+
+        if (method_exists($admin, 'assignRole') && \Spatie\Permission\Models\Role::where('name', 'super_admin')->exists()) {
+            $admin->syncRoles(['super_admin']);
+        }
     }
 }

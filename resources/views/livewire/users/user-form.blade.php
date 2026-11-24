@@ -41,6 +41,22 @@
                 placeholder="email@example.com"
             />
 
+            <!-- Role -->
+            <div class="space-y-2">
+                <x-input-label for="role" :value="__('Role')" />
+                <select
+                    id="role"
+                    name="role"
+                    wire:model="role"
+                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+                >
+                    @foreach($roles as $roleOption)
+                        <option value="{{ $roleOption }}">{{ \Illuminate\Support\Str::title(str_replace('_', ' ', $roleOption)) }}</option>
+                    @endforeach
+                </select>
+                <x-input-error :messages="$errors->get('role')" />
+            </div>
+
             <!-- Password -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="space-y-2">

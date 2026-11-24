@@ -28,6 +28,79 @@
                         <option value="left">Left (Example: Rp 10.000)</option>
                         <option value="right">Right (Example: 10.000 Rp)</option>
                     </select>
+                @elseif($key === 'payment_gateway')
+                    <select id="value" wire:model="value" class="block w-full rounded-md border-input bg-background shadow-sm focus:border-ring focus:ring-ring sm:text-sm">
+                        <option value="manual">Manual / Offline (Cash, Transfer, QRIS Statis)</option>
+                        <option value="pakasir">Pakasir Payment Gateway</option>
+                        <option value="midtrans">Midtrans Snap</option>
+                        <option value="xendit">Xendit Invoice</option>
+                        <option value="custom">Custom / Generic Webhook Gateway</option>
+                    </select>
+                @elseif($key === 'payment_midtrans_is_production')
+                    <select id="value" wire:model="value" class="block w-full rounded-md border-input bg-background shadow-sm focus:border-ring focus:ring-ring sm:text-sm">
+                        <option value="false">Sandbox (false)</option>
+                        <option value="true">Production (true)</option>
+                    </select>
+                @elseif($key === 'payment_gateway_methods')
+                    <input
+                        type="text"
+                        id="value"
+                        wire:model="value"
+                        class="block w-full rounded-md border-input bg-background shadow-sm focus:border-ring focus:ring-ring sm:text-sm"
+                        placeholder="qris,ewallet,virtual_account"
+                    >
+                    <p class="text-xs text-muted-foreground">Comma-separated methods routed via active online gateway (e.g. qris,ewallet,virtual_account,transfer).</p>
+                @elseif(\Illuminate\Support\Str::endsWith((string) $key, ['_key', '_secret', '_token']))
+                    <input
+                        type="password"
+                        id="value"
+                        wire:model="value"
+                        autocomplete="new-password"
+                        class="block w-full rounded-md border-input bg-background shadow-sm focus:border-ring focus:ring-ring sm:text-sm"
+                        placeholder="Enter secret or leave blank..."
+                    >
+                @elseif($key === 'brand_logo')
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-4 p-3 rounded-lg border border-slate-200 bg-slate-50">
+                            @if($logoUpload)
+                                <img src="{{ $logoUpload->temporaryUrl() }}" alt="Preview Logo" class="h-12 w-12 rounded-lg object-contain bg-white border border-slate-200 p-1">
+                            @elseif($value)
+                                <img src="{{ brand_logo_url() }}" alt="Current Logo" class="h-12 w-12 rounded-lg object-contain bg-white border border-slate-200 p-1">
+                            @else
+                                <x-application-logo class="h-12 w-12" />
+                            @endif
+                            <div class="text-xs text-slate-600">
+                                <p class="font-semibold text-slate-800">{{ $value ? 'Custom Logo Aktif' : 'Default SVG Blueprint Aktif' }}</p>
+                                <p>Format: PNG, JPG, WebP, atau SVG (maks. 2 MB).</p>
+                            </div>
+                        </div>
+
+                        <input
+                            type="file"
+                            id="logoUpload"
+                            wire:model="logoUpload"
+                            accept=".png,.jpg,.jpeg,.webp,.svg"
+                            class="block w-full text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"
+                        >
+                        <x-input-error :messages="$errors->get('logoUpload')" />
+
+                        @if($value)
+                            <div>
+                                <button type="button" wire:click="resetLogo" class="text-xs font-semibold text-red-600 hover:underline">
+                                    Reset ke Logo Default SVG
+                                </button>
+                            </div>
+                        @endif
+                    </div>
+                @elseif(in_array($key, ['brand_name', 'brand_subtitle', 'brand_short_code', 'brand_whatsapp_admin']))
+                    <input
+                        type="text"
+                        id="value"
+                        wire:model="value"
+                        class="block w-full rounded-md border-input bg-background shadow-sm focus:border-ring focus:ring-ring sm:text-sm"
+                        placeholder="Enter value..."
+                    >
+                    <p class="text-xs text-muted-foreground">Perubahan branding langsung diterapkan ke seluruh tampilan aplikasi dan faktur cetak.</p>
                 @elseif($key === 'currency_fraction_digits')
                     <input 
                         type="number" 

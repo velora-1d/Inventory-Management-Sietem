@@ -2,18 +2,25 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use App\DTOs\UserData;
-use App\Models\Purchase;
 use App\Models\FinanceTransaction;
-use Illuminate\Support\Facades\DB;
+use App\Models\Purchase;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Spatie\Permission\Models\Role;
 
 class UserService
 {
+    public function __construct(
+        protected ?AuditService $auditService = null
+    ) {
+        $this->auditService ??= app(AuditService::class);
+    }
+
     public function createUser(UserData $data): User
     {
         return DB::transaction(function () use ($data) {
@@ -21,8 +28,23 @@ class UserService
                 'name' => $data->name,
                 'username' => $data->username,
                 'email' => $data->email,
-                'password' => Hash::make($data->password),
+                'password' => Hash::make((string) $data->password),
             ]);
+
+            if ($data->role && Role::where('name', $data->role)->exists()) {
+                $user->syncRoles([$data->role]);
+            }
+
+            $this->auditService->log(
+                action: 'user.created',
+                entity: $user,
+                after: [
+                    'name' => $user->name,
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'role' => $data->role,
+                ]
+            );
 
             Cache::forget('users_list_all');
 
@@ -33,6 +55,13 @@ class UserService
     public function updateUser(User $user, UserData $data): User
     {
         return DB::transaction(function () use ($user, $data) {
+            $before = [
+                'name' => $user->name,
+                'username' => $user->username,
+                'email' => $user->email,
+                'roles' => $user->getRoleNames()->values()->all(),
+            ];
+
             $updateData = [
                 'name' => $data->name,
                 'username' => $data->username,
@@ -44,6 +73,22 @@ class UserService
             }
 
             $user->update($updateData);
+
+            if ($data->role && Role::where('name', $data->role)->exists()) {
+                $user->syncRoles([$data->role]);
+            }
+
+            $this->auditService->log(
+                action: 'user.updated',
+                entity: $user,
+                before: $before,
+                after: [
+                    'name' => $user->name,
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'roles' => $user->getRoleNames()->values()->all(),
+                ]
+            );
 
             Cache::forget('users_list_all');
 
@@ -68,6 +113,17 @@ class UserService
         if (FinanceTransaction::where('created_by', $user->id)->exists()) {
             throw ValidationException::withMessages(['user' => 'Cannot delete user who has recorded finance transactions.']);
         }
+
+        $this->auditService->log(
+            action: 'user.deleted',
+            entity: $user,
+            before: [
+                'name' => $user->name,
+                'username' => $user->username,
+                'email' => $user->email,
+                'roles' => $user->getRoleNames()->values()->all(),
+            ]
+        );
 
         $user->delete();
 

@@ -14,7 +14,7 @@
         position: relative;
         flex: 1;
         overflow: hidden;
-        background: #0a0a0f;
+        background: #142B4A;
     }
     @media (min-width: 1024px) { .auth-left { display: flex; flex-direction: column; } }
 
@@ -390,14 +390,11 @@
         <div class="auth-left-content">
             {{-- Top: Brand --}}
             <div class="brand-mark">
-                <div class="brand-icon">
-                    <svg width="33" height="33" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
-                        <path d="m3.3 7 8.7 5 8.7-5"/>
-                        <path d="M12 22V12"/>
-                    </svg>
+                <x-application-logo class="w-14 h-14 shrink-0" />
+                <div>
+                    <span class="brand-name block leading-tight">{{ brand_name() }}</span>
+                    <span class="text-xs font-medium tracking-wider uppercase text-sky-200/80">{{ brand_subtitle() }}</span>
                 </div>
-                <span class="brand-name">{{ config('app.name', 'Inventory') }}</span>
             </div>
 
             {{-- Middle: Hero --}}
@@ -451,14 +448,8 @@
 
             {{-- Mobile Brand (hidden on desktop) --}}
             <div class="mobile-brand">
-                <div class="brand-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
-                        <path d="m3.3 7 8.7 5 8.7-5"/>
-                        <path d="M12 22V12"/>
-                    </svg>
-                </div>
-                <span style="font-size:1.125rem;font-weight:800;color:#0f172a;letter-spacing:-.02em;">{{ config('app.name') }}</span>
+                <x-application-logo class="w-9 h-9 shrink-0" />
+                <span style="font-size:1.125rem;font-weight:800;color:#142B4A;letter-spacing:-.02em;">{{ brand_name() }}</span>
             </div>
 
             {{-- Session Status --}}
