@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use App\Payments\PaymentGatewayManager;
+use App\Support\SecurityRateLimiters;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(PaymentGatewayManager::class, fn ($app) => new PaymentGatewayManager($app));
     }
 
     /**
@@ -23,5 +26,15 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('money', function ($expression) {
             return "<?php echo format_money($expression); ?>";
         });
+
+        Gate::before(function ($user, $ability) {
+            if (method_exists($user, 'hasAnyRole') && $user->hasAnyRole(['super_admin', 'owner'])) {
+                return true;
+            }
+
+            return null;
+        });
+
+        SecurityRateLimiters::register();
     }
 }
