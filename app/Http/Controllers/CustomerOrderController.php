@@ -47,7 +47,7 @@ class CustomerOrderController extends Controller
         }
 
         $whatsappUrl = brand_whatsapp_url(
-            "Halo Admin " . brand_name() . ", saya ingin konfirmasi pesanan #{$order->order_number} (Total: " . format_money($order->total) . ")."
+            "Halo Admin " . brand_name() . ", saya ingin konfirmasi pesanan #{$order->order_number} (Total: " . format_money((float) ($order->total ?? 0)) . ")."
         );
 
         $trackingUrl = Route::has('tracking.show')

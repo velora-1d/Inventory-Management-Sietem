@@ -56,7 +56,10 @@ if (!function_exists('brand_logo_url')) {
             return $logo;
         }
 
-        return Storage::disk('public')->url($logo);
+        /** @var \Illuminate\Filesystem\FilesystemAdapter $publicDisk */
+        $publicDisk = Storage::disk('public');
+
+        return $publicDisk->url($logo);
     }
 }
 
