@@ -15,6 +15,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Older libpq (e.g. shared hosting) lacks SNI support required by Neon; pass endpoint via PGOPTIONS.
+        $pgHost = config('database.connections.pgsql.host');
+        if (is_string($pgHost) && str_ends_with($pgHost, '.neon.tech') && empty(getenv('PGOPTIONS'))) {
+            $endpoint = explode('.', $pgHost, 2)[0];
+            if ($endpoint !== '') {
+                putenv("PGOPTIONS=endpoint={$endpoint}");
+            }
+        }
+
         $this->app->singleton(PaymentGatewayManager::class, fn ($app) => new PaymentGatewayManager($app));
     }
 
