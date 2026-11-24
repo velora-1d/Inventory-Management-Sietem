@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Categories;
 
+use App\Livewire\Concerns\HandlesBulkDelete;
 use App\Models\Category;
 use Illuminate\Support\Str;
 use App\Services\CategoryService;
@@ -16,6 +17,7 @@ use PowerComponents\LivewirePowerGrid\Components\SetUp\Exportable;
 
 final class CategoryTable extends PowerGridComponent
 {
+    use HandlesBulkDelete;
     public string $tableName = 'category-table';
     public string $sortField = 'created_at';
     public string $sortDirection = 'desc';
@@ -124,5 +126,17 @@ final class CategoryTable extends PowerGridComponent
                 $this->dispatch('toast', message: $message, type: 'error');
             }
         }
+    }
+
+    protected function performBulkDeleteItem(int|string $id): bool
+    {
+        $category = Category::find($id);
+        if (!$category) {
+            return false;
+        }
+
+        app(CategoryService::class)->deleteCategory($category);
+
+        return true;
     }
 }

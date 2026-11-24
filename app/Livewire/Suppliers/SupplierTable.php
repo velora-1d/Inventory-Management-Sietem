@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Suppliers;
 
+use App\Livewire\Concerns\HandlesBulkDelete;
 use App\Models\Supplier;
 use App\Services\SupplierService;
 use App\Exceptions\SupplierException;
@@ -15,6 +16,7 @@ use PowerComponents\LivewirePowerGrid\Components\SetUp\Exportable;
 
 final class SupplierTable extends PowerGridComponent
 {
+    use HandlesBulkDelete;
     public string $tableName = 'supplier-table';
     public string $sortField = 'created_at';
     public string $sortDirection = 'desc';
@@ -138,5 +140,17 @@ final class SupplierTable extends PowerGridComponent
                 $this->dispatch('toast', message: $message, type: 'error');
             }
         }
+    }
+
+    protected function performBulkDeleteItem(int|string $id): bool
+    {
+        $supplier = Supplier::find($id);
+        if (!$supplier) {
+            return false;
+        }
+
+        app(SupplierService::class)->deleteSupplier($supplier);
+
+        return true;
     }
 }

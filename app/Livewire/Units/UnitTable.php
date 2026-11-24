@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Units;
 
+use App\Livewire\Concerns\HandlesBulkDelete;
 use App\Models\Unit;
 use Illuminate\Support\Str;
 use App\Services\UnitService;
@@ -16,6 +17,7 @@ use PowerComponents\LivewirePowerGrid\Components\SetUp\Exportable;
 
 final class UnitTable extends PowerGridComponent
 {
+    use HandlesBulkDelete;
     public string $tableName = 'unit-table';
     public string $sortField = 'created_at';
     public string $sortDirection = 'desc';
@@ -119,5 +121,17 @@ final class UnitTable extends PowerGridComponent
                 $this->dispatch('toast', message: $message, type: 'error');
             }
         }
+    }
+
+    protected function performBulkDeleteItem(int|string $id): bool
+    {
+        $unit = Unit::find($id);
+        if (!$unit) {
+            return false;
+        }
+
+        app(UnitService::class)->deleteUnit($unit);
+
+        return true;
     }
 }

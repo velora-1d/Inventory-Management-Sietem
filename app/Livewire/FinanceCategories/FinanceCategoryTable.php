@@ -2,6 +2,7 @@
 
 namespace App\Livewire\FinanceCategories;
 
+use App\Livewire\Concerns\HandlesBulkDelete;
 use Illuminate\Support\Str;
 use App\Models\FinanceCategory;
 use App\Enums\FinanceCategoryType;
@@ -19,6 +20,7 @@ use PowerComponents\LivewirePowerGrid\Components\SetUp\Exportable;
 
 final class FinanceCategoryTable extends PowerGridComponent
 {
+    use HandlesBulkDelete;
     public string $tableName = 'finance-category-table';
     public string $sortField = 'created_at';
     public string $sortDirection = 'desc';
@@ -166,5 +168,21 @@ final class FinanceCategoryTable extends PowerGridComponent
                 $this->dispatch('toast', ['message' => $message, 'type' => 'error']);
             }
         }
+    }
+
+    protected function performBulkDeleteItem(int|string $id): bool
+    {
+        $category = FinanceCategory::find($id);
+        if (!$category) {
+            return false;
+        }
+
+        if (in_array($category->name, ['Product Sales', 'Product Purchases'], true)) {
+            throw new FinanceCategoryException('System categories cannot be deleted.');
+        }
+
+        app(FinanceCategoryService::class)->deleteCategory($category);
+
+        return true;
     }
 }

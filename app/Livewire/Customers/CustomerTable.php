@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Customers;
 
+use App\Livewire\Concerns\HandlesBulkDelete;
 use Carbon\Carbon;
 use App\Models\Customer;
 use App\Services\CustomerService;
@@ -16,6 +17,7 @@ use PowerComponents\LivewirePowerGrid\Components\SetUp\Exportable;
 
 final class CustomerTable extends PowerGridComponent
 {
+    use HandlesBulkDelete;
     public string $tableName = 'customer-table';
     public string $sortField = 'created_at';
     public string $sortDirection = 'desc';
@@ -137,5 +139,17 @@ final class CustomerTable extends PowerGridComponent
                 $this->dispatch('toast', message: $message, type: 'error');
             }
         }
+    }
+
+    protected function performBulkDeleteItem(int|string $id): bool
+    {
+        $customer = Customer::find($id);
+        if (!$customer) {
+            return false;
+        }
+
+        app(CustomerService::class)->deleteCustomer($customer);
+
+        return true;
     }
 }

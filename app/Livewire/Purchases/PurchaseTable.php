@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Purchases;
 
+use App\Livewire\Concerns\HandlesBulkDelete;
 use Carbon\Carbon;
 use App\Models\Purchase;
 use App\Models\Supplier;
@@ -21,6 +22,7 @@ use PowerComponents\LivewirePowerGrid\Components\SetUp\Exportable;
 
 final class PurchaseTable extends PowerGridComponent
 {
+    use HandlesBulkDelete;
     public string $tableName = 'purchase-table';
     public string $sortField = 'created_at';
     public string $sortDirection = 'desc';
@@ -228,5 +230,17 @@ final class PurchaseTable extends PowerGridComponent
                 $this->dispatch('toast', message: 'An unexpected error occurred during deletion.', type: 'error');
             }
         }
+    }
+
+    protected function performBulkDeleteItem(int|string $id): bool
+    {
+        $purchase = Purchase::find($id);
+        if (!$purchase) {
+            return false;
+        }
+
+        app(PurchaseService::class)->deletePurchase($purchase);
+
+        return true;
     }
 }

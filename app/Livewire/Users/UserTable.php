@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Users;
 
+use App\Livewire\Concerns\HandlesBulkDelete;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
@@ -16,6 +17,7 @@ use PowerComponents\LivewirePowerGrid\Components\SetUp\Exportable;
 
 final class UserTable extends PowerGridComponent
 {
+    use HandlesBulkDelete;
     public string $tableName = 'user-table';
     public string $sortField = 'created_at';
     public string $sortDirection = 'desc';
@@ -137,5 +139,17 @@ final class UserTable extends PowerGridComponent
                 $this->dispatch('toast', message: $e->getMessage(), type: 'error');
             }
         }
+    }
+
+    protected function performBulkDeleteItem(int|string $id): bool
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return false;
+        }
+
+        app(\App\Services\UserService::class)->deleteUser($user);
+
+        return true;
     }
 }
