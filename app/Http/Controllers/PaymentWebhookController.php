@@ -2,85 +2,98 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sale;
-use App\Enums\SaleStatus;
 use App\Enums\PaymentMethod;
+use App\Enums\SaleStatus;
+use App\Models\Sale;
+use App\Payments\PaymentGatewayManager;
 use App\Services\SaleService;
-use App\Services\PakasirService;
-use App\Http\Requests\PakasirWebhookRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
-use RuntimeException;
+use InvalidArgumentException;
 
 class PaymentWebhookController extends Controller
 {
     public function __construct(
         protected SaleService $saleService,
-        protected PakasirService $pakasirService,
-    ) {
-    }
+        protected PaymentGatewayManager $paymentManager,
+    ) {}
 
-    public function handlePakasir(PakasirWebhookRequest $request): JsonResponse
+    public function handle(Request $request, string $gateway): JsonResponse
     {
-        $payload = $request->validated();
+        try {
+            $driver = $this->paymentManager->driver($gateway);
+        } catch (InvalidArgumentException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 404);
+        }
 
-        Log::info('Pakasir webhook received', [
-            'order_id' => $payload['order_id'],
-            'status'   => $payload['status'],
-            'amount'   => $payload['amount'],
+        try {
+            $webhook = $driver->parseWebhook($request);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Throwable $e) {
+            Log::warning('Payment webhook verification/parsing failed', [
+                'gateway' => $gateway,
+                'error' => $e->getMessage(),
+            ]);
+
+            $status = str_contains(strtolower($e->getMessage()), 'invalid') ? 401 : 400;
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], $status);
+        }
+
+        Log::info('Payment webhook received', [
+            'gateway' => $webhook->gateway,
+            'order_id' => $webhook->orderId,
+            'reference' => $webhook->reference,
+            'status' => $webhook->status,
+            'amount' => $webhook->amount,
         ]);
 
-        $sale = Sale::where('invoice_number', $payload['order_id'])->first();
+        $sale = Sale::where('invoice_number', $webhook->orderId)
+            ->orWhere('payment_reference', $webhook->reference)
+            ->first();
 
         if (!$sale) {
-            Log::error('Sale not found for Pakasir webhook', ['order_id' => $payload['order_id']]);
+            Log::error('Sale not found for payment webhook', [
+                'gateway' => $webhook->gateway,
+                'order_id' => $webhook->orderId,
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Sale not found.',
             ], 404);
         }
 
-        // Verify the transaction directly with Pakasir API for security
         $expectedAmount = (int) $sale->total;
-        $response = $this->pakasirService->getTransactionDetail($sale->invoice_number, $expectedAmount);
-        $transaction = $response['transaction'] ?? null;
-
-        if (!$transaction) {
-            Log::error('Pakasir transaction details not found via API', ['order_id' => $sale->invoice_number]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Transaction detail not found.',
-            ], 400);
-        }
-
-        // Verify project slug
-        if (($transaction['project'] ?? null) !== config('services.pakasir.slug')) {
-            Log::error('Pakasir project mismatch', [
-                'expected' => config('services.pakasir.slug'),
-                'received' => $transaction['project'] ?? null
-            ]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Project mismatch.',
-            ], 400);
-        }
-
-        // Verify amount
-        if ((int) ($transaction['amount'] ?? 0) !== $expectedAmount) {
-            Log::error('Pakasir transaction amount mismatch', [
+        if ($webhook->amount !== $expectedAmount) {
+            Log::error('Payment webhook amount mismatch', [
+                'gateway' => $webhook->gateway,
+                'order_id' => $sale->invoice_number,
                 'expected' => $expectedAmount,
-                'received' => $transaction['amount'] ?? null
+                'received' => $webhook->amount,
             ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Amount mismatch.',
             ], 400);
         }
 
-        // If the transaction is completed on Pakasir's end
-        if (($transaction['status'] ?? null) === 'completed') {
+        if ($webhook->status === 'paid') {
             if ($sale->status === SaleStatus::COMPLETED) {
                 return response()->json([
                     'success' => true,
@@ -90,13 +103,18 @@ class PaymentWebhookController extends Controller
 
             if ($sale->status === SaleStatus::PENDING) {
                 try {
-                    // Update payment method to the dynamic method used (e.g. qris, etc.)
-                    $methodName = strtolower($transaction['payment_method'] ?? 'qris');
-                    $resolvedMethod = PaymentMethod::tryFrom($methodName) ?? PaymentMethod::QRIS;
+                    $resolvedMethod = $webhook->paymentMethod
+                        ? (PaymentMethod::tryFrom($webhook->paymentMethod) ?? $sale->payment_method)
+                        : $sale->payment_method;
 
-                    DB::transaction(function () use ($sale, $resolvedMethod) {
+                    DB::transaction(function () use ($sale, $resolvedMethod, $webhook) {
                         $sale->update([
                             'payment_method' => $resolvedMethod,
+                            'payment_gateway' => $webhook->gateway,
+                            'payment_reference' => $webhook->reference,
+                            'payment_meta' => array_merge($sale->payment_meta ?? [], [
+                                'webhook' => $webhook->raw,
+                            ]),
                             'cash_received' => $sale->total,
                             'change' => 0,
                         ]);
@@ -104,12 +122,17 @@ class PaymentWebhookController extends Controller
                         $this->saleService->completeSale($sale);
                     });
 
-                    Log::info('Sale completed successfully via Pakasir Webhook', ['invoice_number' => $sale->invoice_number]);
-                } catch (\Exception $e) {
-                    Log::error('Failed to complete sale via Pakasir Webhook', [
+                    Log::info('Sale completed successfully via payment webhook', [
+                        'gateway' => $webhook->gateway,
                         'invoice_number' => $sale->invoice_number,
-                        'error' => $e->getMessage()
                     ]);
+                } catch (\Throwable $e) {
+                    Log::error('Failed to complete sale via payment webhook', [
+                        'gateway' => $webhook->gateway,
+                        'invoice_number' => $sale->invoice_number,
+                        'error' => $e->getMessage(),
+                    ]);
+
                     return response()->json([
                         'success' => false,
                         'message' => 'Failed to complete sale: ' . $e->getMessage(),
@@ -121,6 +144,13 @@ class PaymentWebhookController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Webhook processed.',
+            'gateway' => $webhook->gateway,
+            'status' => $webhook->status,
         ]);
+    }
+
+    public function handlePakasir(Request $request): JsonResponse
+    {
+        return $this->handle($request, 'pakasir');
     }
 }
