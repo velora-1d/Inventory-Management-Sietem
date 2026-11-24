@@ -367,3 +367,31 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
     -moz-appearance: textfield !important;
 }
+
+/* Ensure checkboxes and radios (including PowerGrid text-accent) have high contrast */
+input[type="checkbox"],
+input[type="radio"],
+.form-checkbox,
+.form-radio {
+    border-color: #94a3b8 !important;
+    background-color: #ffffff;
+    accent-color: #2563eb;
+}
+
+input[type="checkbox"].text-accent,
+input[type="radio"].text-accent {
+    color: #2563eb !important;
+}
+
+input[type="checkbox"]:checked,
+input[type="radio"]:checked,
+.form-checkbox:checked,
+.form-radio:checked {
+    background-color: #2563eb !important;
+    border-color: #2563eb !important;
+}
+
+input[type="checkbox"]:focus,
+input[type="radio"]:focus {
+    --tw-ring-color: rgba(37, 99, 235, 0.35) !important;
+}
