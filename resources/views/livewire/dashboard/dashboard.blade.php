@@ -386,7 +386,7 @@
                             </div>
                             <!-- Relative performance bar -->
                             <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800/80 rounded-full overflow-hidden">
-                                <div class="h-full bg-sky-500 rounded-full progress-bar-fill" style="width: {{ $percentage }}%"></div>
+                                <div class="h-full bg-sky-500 rounded-full progress-bar-fill" x-bind:style="{ width: '{{ $percentage }}%' }"></div>
                             </div>
                         </div>
                     @empty
@@ -435,6 +435,11 @@
     </div>
 
     <!-- ApexCharts Setup Script -->
+    <div id="dashboard-chart-seed"
+         class="hidden"
+         data-sales="{{ json_encode($salesChart) }}"
+         data-cash-flow="{{ json_encode($cashFlowChart) }}"
+         data-expense="{{ json_encode($expenseChart) }}"></div>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
         document.addEventListener('livewire:initialized', () => {
@@ -690,11 +695,14 @@
             };
 
             // Initial Load
-            initCharts({
-                sales: @json($salesChart),
-                cashFlow: @json($cashFlowChart),
-                expense: @json($expenseChart)
-            });
+            const chartSeedEl = document.getElementById('dashboard-chart-seed');
+            if (chartSeedEl) {
+                initCharts({
+                    sales: JSON.parse(chartSeedEl.dataset.sales || '{}'),
+                    cashFlow: JSON.parse(chartSeedEl.dataset.cashFlow || '{}'),
+                    expense: JSON.parse(chartSeedEl.dataset.expense || '{}')
+                });
+            }
 
             // Listen for server-side updates
             Livewire.on('stats-updated', (data) => {
