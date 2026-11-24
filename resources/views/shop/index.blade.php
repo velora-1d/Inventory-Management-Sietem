@@ -118,9 +118,33 @@
                             @foreach($products as $product)
                                 @php
                                     $available = (int) ($product->available_stock ?? 0);
+                                    $imageSrc = null;
+                                    if (!empty($product->image)) {
+                                        $imageSrc = \Illuminate\Support\Str::startsWith($product->image, ['http://', 'https://', '/'])
+                                            ? $product->image
+                                            : asset('storage/' . ltrim($product->image, '/'));
+                                    }
                                 @endphp
                                 <div class="flex flex-col justify-between rounded-2xl border border-[#DCE3EA] bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
                                     <div>
+                                        <div class="relative mb-3 h-44 w-full overflow-hidden rounded-xl border border-[#DCE3EA] bg-gradient-to-br from-slate-50 via-blue-50/60 to-sky-50">
+                                            @if($imageSrc)
+                                                <img src="{{ $imageSrc }}"
+                                                     alt="{{ $product->name }}"
+                                                     loading="lazy"
+                                                     class="h-full w-full object-cover transition-transform duration-300 hover:scale-105" />
+                                            @else
+                                                <div class="flex h-full w-full flex-col items-center justify-center gap-2 text-slate-400">
+                                                    <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-white/90 text-[#2563EB] shadow-sm border border-[#DCE3EA]">
+                                                        <x-heroicon-o-cube class="h-6 w-6" />
+                                                    </div>
+                                                    <span class="text-[11px] font-medium text-slate-500">
+                                                        {{ $product->category?->name ?? 'Produk' }}
+                                                    </span>
+                                                </div>
+                                            @endif
+                                        </div>
+
                                         <div class="flex items-start justify-between gap-2">
                                             <span class="rounded-md border border-[#DCE3EA] bg-[#F8FAFC] px-2 py-0.5 text-[11px] font-mono text-slate-600">
                                                 {{ $product->sku ?: 'SKU-' . $product->id }}

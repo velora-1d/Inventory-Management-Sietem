@@ -134,6 +134,13 @@
                 </div>
 
                 <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                    <!-- Landing Page Button -->
+                    <a href="{{ route('shop.index') }}" target="_blank" rel="noopener noreferrer"
+                       class="print:hidden inline-flex items-center justify-center rounded-xl text-xs font-semibold text-[#142B4A] dark:text-slate-200 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-300 hover:text-sky-600 transition-all h-10 px-3.5 gap-2 shadow-sm">
+                        <x-heroicon-o-arrow-top-right-on-square class="h-4 w-4" />
+                        <span>Lihat Landing Page</span>
+                    </a>
+
                     <!-- Refresh Button -->
                     <button wire:click="$refresh" 
                             class="print:hidden inline-flex items-center justify-center rounded-xl text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all h-10 w-10 shadow-sm">
