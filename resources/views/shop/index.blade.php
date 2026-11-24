@@ -10,43 +10,43 @@
     <div class="min-h-screen bg-[#F8FAFC] text-[#142B4A]">
         {{-- Top Blueprint Header --}}
         <header class="sticky top-0 z-30 border-b border-[#DCE3EA] bg-white/95 backdrop-blur-sm">
-            <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6 lg:px-8">
-                <a href="{{ $shopUrl }}" class="flex items-center gap-3">
-                    <x-application-logo class="h-9 w-9" />
-                    <div>
-                        <p class="text-sm font-bold tracking-tight text-[#142B4A]">{{ brand_name() }}</p>
-                        <p class="text-[11px] font-medium text-slate-500">Customer Storefront &amp; Order Portal</p>
+            <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2.5 px-4 py-3 sm:px-6 lg:px-8">
+                <a href="{{ $shopUrl }}" wire:navigate class="flex min-w-0 items-center gap-2.5 sm:gap-3">
+                    <x-application-logo class="h-8 w-8 shrink-0 sm:h-9 sm:w-9" />
+                    <div class="min-w-0">
+                        <p class="truncate text-sm font-bold tracking-tight text-[#142B4A]">{{ brand_name() }}</p>
+                        <p class="hidden text-[11px] font-medium text-slate-500 sm:block">Customer Storefront &amp; Order Portal</p>
                     </div>
                 </a>
 
-                <div class="flex items-center gap-2.5 sm:gap-3">
-                    <a href="{{ $checkoutUrl }}"
-                       class="inline-flex items-center gap-2 rounded-lg border border-[#DCE3EA] bg-white px-3 py-2 text-xs font-semibold text-[#142B4A] hover:border-[#2563EB] hover:text-[#2563EB] transition-colors">
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                    <a href="{{ $checkoutUrl }}" wire:navigate
+                       class="inline-flex items-center gap-1.5 rounded-lg border border-[#DCE3EA] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#142B4A] hover:border-[#2563EB] hover:text-[#2563EB] transition-colors sm:gap-2 sm:px-3 sm:py-2">
                         <span>Keranjang</span>
                         <span class="rounded-full bg-[#2563EB] px-2 py-0.5 text-[11px] font-bold text-white">{{ $cartCount }}</span>
                     </a>
 
                     @if(auth()->check())
-                        <a href="{{ $myOrdersUrl }}"
-                           class="inline-flex items-center rounded-lg border border-[#DCE3EA] bg-[#F8FAFC] px-3 py-2 text-xs font-semibold text-[#142B4A] hover:bg-slate-100 transition-colors">
+                        <a href="{{ $myOrdersUrl }}" wire:navigate
+                           class="inline-flex items-center rounded-lg border border-[#DCE3EA] bg-[#F8FAFC] px-2.5 py-1.5 text-xs font-semibold text-[#142B4A] hover:bg-slate-100 transition-colors sm:px-3 sm:py-2">
                             Pesanan Saya
                         </a>
                         @if(Route::has('logout'))
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit"
-                                        class="inline-flex items-center rounded-lg border border-[#DCE3EA] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:text-[#DC2626] transition-colors">
+                                        class="inline-flex items-center rounded-lg border border-[#DCE3EA] bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:text-[#DC2626] transition-colors sm:px-3 sm:py-2">
                                     Keluar
                                 </button>
                             </form>
                         @endif
                     @else
-                        <a href="{{ $loginUrl }}"
-                           class="inline-flex items-center rounded-lg border border-[#DCE3EA] bg-white px-3 py-2 text-xs font-semibold text-[#142B4A] hover:bg-[#F8FAFC] transition-colors">
+                        <a href="{{ $loginUrl }}" wire:navigate
+                           class="inline-flex items-center rounded-lg border border-[#DCE3EA] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#142B4A] hover:bg-[#F8FAFC] transition-colors sm:px-3 sm:py-2">
                             Masuk
                         </a>
-                        <a href="{{ $registerUrl }}"
-                           class="inline-flex items-center rounded-lg bg-[#2563EB] px-3.5 py-2 text-xs font-semibold text-white hover:bg-[#1D4ED8] transition-colors">
+                        <a href="{{ $registerUrl }}" wire:navigate
+                           class="inline-flex items-center rounded-lg bg-[#2563EB] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#1D4ED8] transition-colors sm:px-3.5 sm:py-2">
                             Daftar
                         </a>
                     @endif
@@ -54,7 +54,7 @@
             </div>
         </header>
 
-        <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 space-y-6">
+        <main class="mx-auto max-w-7xl px-4 py-5 pb-24 sm:px-6 sm:py-6 lg:px-8 lg:pb-8 space-y-5 sm:space-y-6">
             {{-- Flash Messages --}}
             @if(session('success'))
                 <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-[#0F766E]">
@@ -201,14 +201,14 @@
                             @endforeach
                         </div>
 
-                        <div class="pt-2">
+                        <div class="pt-2 overflow-x-auto" id="shop-pagination">
                             {{ $products->links() }}
                         </div>
                     @endif
                 </div>
 
                 {{-- Session Cart Sidebar --}}
-                <aside class="lg:col-span-4">
+                <aside id="shop-cart" class="lg:col-span-4">
                     <div class="sticky top-20 rounded-2xl border border-[#DCE3EA] bg-white p-5 shadow-sm">
                         <div class="flex items-center justify-between border-b border-[#DCE3EA] pb-3">
                             <h2 class="text-base font-bold text-[#142B4A]">Keranjang Belanja</h2>
@@ -269,7 +269,7 @@
                                     <span class="text-lg font-extrabold text-[#142B4A]">{{ format_money($cartSubtotal) }}</span>
                                 </div>
 
-                                <a href="{{ $checkoutUrl }}"
+                                <a href="{{ $checkoutUrl }}" wire:navigate
                                    class="block w-full rounded-xl bg-[#0F766E] px-4 py-2.5 text-center text-sm font-bold text-white hover:bg-[#0D655E] transition-colors">
                                     Lanjut ke Checkout
                                 </a>
@@ -279,5 +279,45 @@
                 </aside>
             </div>
         </main>
+
+        {{-- Mobile Sticky Cart Bar --}}
+        @if($cartCount > 0)
+            <div class="fixed inset-x-0 bottom-0 z-30 border-t border-[#DCE3EA] bg-white/95 px-4 py-3 backdrop-blur-md shadow-lg lg:hidden">
+                <div class="mx-auto flex max-w-7xl items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <p class="text-[11px] font-medium text-slate-500">{{ $cartCount }} item di keranjang</p>
+                        <p class="truncate text-sm font-extrabold text-[#142B4A]">{{ format_money($cartSubtotal) }}</p>
+                    </div>
+                    <div class="flex shrink-0 items-center gap-2">
+                        <a href="#shop-cart"
+                           class="rounded-lg border border-[#DCE3EA] bg-white px-3 py-2 text-xs font-semibold text-[#142B4A]">
+                            Keranjang
+                        </a>
+                        <a href="{{ $checkoutUrl }}" wire:navigate
+                           class="rounded-lg bg-[#0F766E] px-3.5 py-2 text-xs font-bold text-white hover:bg-[#0D655E]">
+                            Checkout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
+
+    <script>
+        (function () {
+            if (window.__shopPaginationBound) return;
+            window.__shopPaginationBound = true;
+
+            document.addEventListener('click', function (event) {
+                const link = event.target.closest('#shop-pagination a[href]');
+                if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+                    return;
+                }
+                if (window.Livewire && typeof window.Livewire.navigate === 'function') {
+                    event.preventDefault();
+                    window.Livewire.navigate(link.href);
+                }
+            });
+        })();
+    </script>
 </x-guest-layout>
