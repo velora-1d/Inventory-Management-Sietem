@@ -18,15 +18,16 @@ class DeleteModal extends Component
 
     #[On('open-delete-modal')]
     public function open(
-        string $component,
         string $method,
         array $params = [],
+        string $component = '',
+        string $targetComponent = '',
         string $title = '',
         string $description = '',
         string $confirmButtonText = 'Continue',
         string $confirmButtonClass = ''
     ) {
-        $this->component = $component;
+        $this->component = $targetComponent ?: $component;
         $this->method = $method;
         $this->params = $params;
 

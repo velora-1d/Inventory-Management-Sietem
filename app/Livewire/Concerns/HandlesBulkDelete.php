@@ -40,7 +40,7 @@ trait HandlesBulkDelete
 
         $this->dispatch(
             'open-delete-modal',
-            component: $this->getName(),
+            targetComponent: $this->getName(),
             method: 'confirm-bulk-delete',
             params: ['ids' => $ids],
             title: "Hapus {$count} Data Terpilih?",
