@@ -38,15 +38,14 @@ trait HandlesBulkDelete
 
         $count = count($ids);
 
-        $this->dispatch(
-            'open-delete-modal',
-            targetComponent: $this->getName(),
-            method: 'confirm-bulk-delete',
-            params: ['ids' => $ids],
-            title: "Hapus {$count} Data Terpilih?",
-            description: "Apakah Anda yakin ingin menghapus {$count} data yang dipilih? Tindakan ini tidak dapat dibatalkan.",
-            confirmButtonText: 'Ya, Hapus Semua'
-        );
+        $this->dispatch('open-delete-modal', ...[
+            'targetComponent' => $this->getName(),
+            'method' => 'confirm-bulk-delete',
+            'params' => ['ids' => $ids],
+            'title' => "Hapus {$count} Data Terpilih?",
+            'description' => "Apakah Anda yakin ingin menghapus {$count} data yang dipilih? Tindakan ini tidak dapat dibatalkan.",
+            'confirmButtonText' => 'Ya, Hapus Semua',
+        ]);
     }
 
     #[On('confirm-bulk-delete')]
